@@ -15,9 +15,16 @@ import uvicorn
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 from jai_api import chat, queries
 from jai_api.db import ping
+
+
+class DecideRequest(BaseModel):
+    approver: str
+    approve: bool
+    note: str = ""
 
 Dimension = Literal["tenant_id", "agent", "run_id", "model_group"]
 
@@ -89,6 +96,31 @@ def create_app() -> FastAPI:
             return chat.run_chat(req)
         except FileNotFoundError as exc:
             return JSONResponse(status_code=503, content={"error": "agent_unavailable",
+                                                          "detail": str(exc)})
+        except (psycopg.Error, OSError) as exc:
+            return _pg_unavailable(exc)
+
+    @app.get("/approvals")
+    def approvals(tenant_id: str | None = None) -> Any:
+        try:
+            from jai_brakes import Brakes
+
+            brakes = Brakes()
+            brakes.ensure_schema()
+            return brakes.pending(tenant_id)
+        except (psycopg.Error, OSError) as exc:
+            return _pg_unavailable(exc)
+
+    @app.post("/approvals/{approval_id}/decide")
+    def decide_approval(approval_id: int, req: DecideRequest) -> Any:
+        try:
+            from jai_brakes import Brakes
+
+            row = Brakes().decide(approval_id, approver=req.approver,
+                                  approve=req.approve, note=req.note)
+            return row
+        except ValueError as exc:  # already decided / unknown id
+            return JSONResponse(status_code=409, content={"error": "undecidable",
                                                           "detail": str(exc)})
         except (psycopg.Error, OSError) as exc:
             return _pg_unavailable(exc)

@@ -94,8 +94,9 @@ class AgentManifest(BaseModel):
     metrics: MetricTargets = Field(default_factory=MetricTargets)
     a2a_card: str | None = None          # path to the A2A agent card (P3)
     # Which engine graph shape this agent compiles to. "direct" = guard→model→guard;
-    # "rag" = guard→retrieve→synthesize→guard (requires an injected retriever).
-    pipeline: Literal["direct", "rag"] = "direct"
+    # "rag" = guard→retrieve→synthesize→guard (requires an injected retriever);
+    # "sourcing" = the durable, gated RFx workflow (requires tools/governor/brakes).
+    pipeline: Literal["direct", "rag", "sourcing"] = "direct"
 
     @field_validator("name")
     @classmethod

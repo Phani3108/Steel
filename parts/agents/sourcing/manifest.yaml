@@ -1,0 +1,31 @@
+# agent-sourcing — runs a sourcing event end-to-end inside hard rails:
+# governor policy checks before every irreversible step, two human gates,
+# a bounded mandate, and the kill switch at every node boundary.
+api_version: jai/v1
+name: agent-sourcing
+description: >
+  Autonomous sourcing: intake → RFx draft → human publish gate → bid collection →
+  scoring → policy-checked award (second human gate above threshold). Durable: the run
+  survives process death at any point and resumes from its Postgres checkpoint.
+autonomy_level: 3
+pipeline: sourcing
+model:
+  group: reasoning
+  max_tokens: 1024
+  budget_usd_per_task: 0.25
+prompt:
+  path: prompts/sourcing.md
+  version: "1"
+hitl_gates:
+  - name: rfx_publish
+    description: A human approves the RFx before suppliers are invited to bid.
+    approver_roles: [category_manager, cpo]
+  - name: award_approval
+    description: Awards above the actor's threshold need a human signature.
+    approver_roles: [cpo]
+mandate:
+  max_spend_usd: 250000
+  notes: Hard cap — the governor denies any award above this regardless of approvals.
+metrics:
+  eval_pass_rate: 0.90
+  max_policy_violations: 0

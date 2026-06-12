@@ -2,7 +2,7 @@
   {
     "agent": "agent-supplier-intel",
     "suite": "suite1-goldens",
-    "ts": "2026-06-12T17:50:33.392950Z",
+    "ts": "2026-06-12T18:25:37.949908Z",
     "n_cases": 60,
     "n_passed": 60,
     "pass_rate": 1.0,
@@ -13,7 +13,7 @@
   {
     "agent": "agent-supplier-intel",
     "suite": "suite1-injections",
-    "ts": "2026-06-12T17:50:34.996337Z",
+    "ts": "2026-06-12T18:25:39.628549Z",
     "n_cases": 10,
     "n_passed": 10,
     "pass_rate": 1.0,
@@ -24,7 +24,7 @@
   {
     "agent": "agent-supplier-intel",
     "suite": "suite1-permissions",
-    "ts": "2026-06-12T17:50:36.979844Z",
+    "ts": "2026-06-12T18:25:41.463446Z",
     "n_cases": 10,
     "n_passed": 10,
     "pass_rate": 1.0,

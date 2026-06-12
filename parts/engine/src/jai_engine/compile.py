@@ -107,6 +107,7 @@ def _audit(
     action: str,
     outcome: Outcome,
     input_sha256: str | None = None,
+    policy_version: str | None = None,
     detail: dict[str, Any] | None = None,
 ) -> None:
     blackbox.append(
@@ -119,6 +120,7 @@ def _audit(
             trace_id=ctx.trace_id,
             action=action,
             outcome=outcome,
+            policy_version=policy_version,
             input_sha256=input_sha256,
             detail=detail or {},
         )

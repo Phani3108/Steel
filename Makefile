@@ -31,8 +31,12 @@ demo-p0: smoke ## Alias for the P0 demo
 demo-p1: ## Demo 1: supplier intelligence — one agent, four personas, permission-aware
 	uv run python parts/engine/demo/demo_1.py
 
-evals: ## Run all eval suites (keyless: measures retrieval + permission correctness)
+demo-p2: ## Demo 2: autonomous sourcing — gates, kill -9 resume, governor, kill switch
+	uv run python parts/engine/demo/demo_2.py
+
+evals: ## Run all eval suites (keyless: deterministic policy + retrieval correctness)
 	uv run python evals/run_suite1.py
+	uv run python evals/run_suite2.py
 
 schemas: ## Export JSON Schemas from jai-manifest pydantic models
 	uv run jai-manifest export-schemas --out schemas/

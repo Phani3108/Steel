@@ -1,0 +1,11 @@
+{
+  "agent": "agent-sourcing",
+  "suite": "suite2-sourcing",
+  "ts": "2026-06-12T18:25:58.103154Z",
+  "n_cases": 12,
+  "n_passed": 12,
+  "pass_rate": 1.0,
+  "failures": [],
+  "policy_violations": 0,
+  "cost_usd_total": 0.0
+}

@@ -1,0 +1,25 @@
+# Procurement policy — the versioned artifact jai-governor evaluates.
+# Changing a rule means changing this file and bumping `version`; every Decision
+# carries the version it was evaluated under, so audits can replay history.
+version: "2026.06-1"
+
+# Per-role approval ceilings (USD). Spend above the actor's ceiling is still
+# allowed, but only behind the named HITL gate — a human signs, not the agent.
+approval_thresholds_usd:
+  requester: 5000
+  category_manager: 50000
+  cpo: 250000
+
+# Competitive-bidding floor: awards at or above the exemption need >= min_bids.
+three_bid_rule:
+  min_bids: 3
+  exempt_below_usd: 10000
+
+# Who may open a sourcing event at all.
+sourcing:
+  create_roles: [category_manager, cpo, system]
+
+# Mandate enforcement: spend strictly over (cap * hard_deny_over_pct) is denied
+# outright — no gate, no retry. 1.0 means anything over 100% of the cap.
+mandate:
+  hard_deny_over_pct: 1.0

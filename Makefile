@@ -34,6 +34,15 @@ evals: ## Run eval suites against real models (needs API keys; JAI_MOCK=0)
 schemas: ## Export JSON Schemas from jai-manifest pydantic models
 	uv run jai-manifest export-schemas --out schemas/
 
+demo-part-%: ## Run a part's standalone demo, e.g. make demo-part-blackbox
+	uv run python parts/$*/demo/demo.py
+
+api: ## Run the control plane on :8400
+	uv run uvicorn --factory jai_api.main:create_app --port 8400
+
+console: ## Run the console on :3000 (needs `make api` in another shell)
+	cd apps/console && pnpm dev
+
 lint: ## Ruff + import-boundary contracts
 	uv run ruff check .
 	uv run lint-imports

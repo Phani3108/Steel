@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "contracts": 80,
+    "invoices": 12000,
+    "items": 1200,
+    "news_snippets": 120,
+    "policy_docs": 10,
+    "purchase_orders": 5000,
+    "rfx_events": 40,
+    "seller_personas": 6,
+    "suppliers": 250,
+    "tenants": 3
+  },
+  "seed": 31082,
+  "sha256": {
+    "contracts.jsonl": "28b5334371e3bc243fe27158fd47f47dd33cd4851d8446d8f57f798f3f175e2e",
+    "invoices.jsonl": "405447b6a1d0a2fe384e330eadec5da85102dc48e241fa53d79feec4cf251721",
+    "items.jsonl": "f20d2fc63d6ca773d89a50c9f3ab226a7afc12fa56c88cf2747be5a5fbac3778",
+    "news_snippets.jsonl": "3e64d0fee51aac0959bbe0a5791254a04f3029d34e21ca777676572903220142",
+    "policy_docs.jsonl": "25e210ffcd62e17cff84b75ca8b16937684a9bdbec7bf5d70edbbdbdf97134d0",
+    "purchase_orders.jsonl": "c43b138906902d3845360014d834fe47135fb2d1eded5e97601c4f7b570e0f1a",
+    "rfx_events.jsonl": "578bba99b611bc4b510b4aa6534c7503248ce5971a14a24f0cc9c736080ed606",
+    "seller_personas.jsonl": "612a273cbda134affe2ee780fb2dbcc99fb5a39c48d09724677d9543e0fe76de",
+    "suppliers.jsonl": "a20791b36b93ae3f864047521e4ddfc8a2d5ecf90262987f7606775ae0f5782f",
+    "tenants.jsonl": "0d9b93cd10a19199feff99496f02a37f8293b4e071cfa122608483381dcb4d87"
+  }
+}

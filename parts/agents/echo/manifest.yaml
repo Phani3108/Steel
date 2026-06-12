@@ -1,0 +1,11 @@
+api_version: jai/v1
+name: agent-echo
+description: echoes the user input back, prefixed
+autonomy_level: 2
+model:
+  group: reasoning
+  max_tokens: 256
+  budget_usd_per_task: 0.05
+prompt:
+  path: prompts/echo.md
+  version: "1"

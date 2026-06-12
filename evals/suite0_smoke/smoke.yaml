@@ -1,0 +1,19 @@
+name: suite0_smoke
+description: Smoke suite — exercises the exact and contains graders against the echo target.
+cases:
+  - id: exact-roundtrip
+    input: "hello procurement"
+    expected: "hello procurement"
+    grader: exact
+  - id: exact-unicode
+    input: "Förhandlung — €1,200 für PO-7"
+    expected: "Förhandlung — €1,200 für PO-7"
+    grader: exact
+  - id: contains-substring
+    input: "the quick brown fox jumps over the lazy dog"
+    expected: "brown fox"
+    grader: contains
+  - id: contains-po-number
+    input: "approve purchase order PO-0042 for tenant acme"
+    expected: "PO-0042"
+    grader: contains

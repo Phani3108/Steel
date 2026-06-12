@@ -26,7 +26,8 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - ./infra/litellm/config.yaml:/app/config.yaml:ro
+      # LITELLM_CONFIG_FILE=config.mock.yaml gives a fully keyless gateway (see .env.example)
+      - ./infra/litellm/${LITELLM_CONFIG_FILE:-config.yaml}:/app/config.yaml:ro
     environment:
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-jai-master-dev}
       DATABASE_URL: postgresql://jai:jai@postgres:5432/litellm

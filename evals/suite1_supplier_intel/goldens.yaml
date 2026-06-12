@@ -1,0 +1,378 @@
+name: suite1-goldens
+description: 60 fact questions with seed-derivable answers (T1–T4)
+cases:
+- id: g-sup-SUP-0001
+  input: Tell me about supplier Rampart Engineering Inc.
+  expected: United States
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0002
+  input: Tell me about supplier Stellar Casting GmbH
+  expected: Germany
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0003
+  input: Tell me about supplier Foxtrot Logistics Pvt Ltd
+  expected: India
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0004
+  input: Tell me about supplier Pinnacle Precision Inc.
+  expected: United States
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0005
+  input: Tell me about supplier Argent Fabrication GmbH
+  expected: Germany
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0006
+  input: Tell me about supplier Cascade Components Pte Ltd
+  expected: Singapore
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0007
+  input: Tell me about supplier Vanguard Precision Inc.
+  expected: United States
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0008
+  input: Tell me about supplier Stellar Industrial S.p.A.
+  expected: Italy
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0009
+  input: Tell me about supplier Westfield Systems Co., Ltd.
+  expected: China
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0010
+  input: Tell me about supplier Calder Fabrication S.A. de C.V.
+  expected: Mexico
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0011
+  input: Tell me about supplier Westfield Precision AB
+  expected: Sweden
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0012
+  input: Tell me about supplier Apex Engineering K.K.
+  expected: Japan
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0013
+  input: Tell me about supplier Quarry Metals Inc.
+  expected: United States
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0014
+  input: Tell me about supplier Cascade Systems SAS
+  expected: France
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0015
+  input: Tell me about supplier Cobalt Polymer Sdn Bhd
+  expected: Malaysia
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0016
+  input: Tell me about supplier Vertex Automation S.A. de C.V.
+  expected: Mexico
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0017
+  input: Tell me about supplier Zenith Casting GmbH
+  expected: Germany
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0018
+  input: Tell me about supplier Apex Automation Sdn Bhd
+  expected: Malaysia
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0019
+  input: Tell me about supplier Linden Dynamics Inc.
+  expected: United States
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0020
+  input: Tell me about supplier Westfield Metals SAS
+  expected: France
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0021
+  input: Tell me about supplier Norden Materials Sdn Bhd
+  expected: Malaysia
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0022
+  input: Tell me about supplier Calder Dynamics S.A. de C.V.
+  expected: Mexico
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-sup-SUP-0023
+  input: Tell me about supplier Orion Forge B.V.
+  expected: Netherlands
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-sup-SUP-0024
+  input: Tell me about supplier Granite Forge Pvt Ltd
+  expected: India
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-sup-SUP-0025
+  input: Tell me about supplier Bluepeak Automation S.A. de C.V.
+  expected: Mexico
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-itm-ITM-0001
+  input: What is the unit price of BRG-00001?
+  expected: '28.56'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0001
+- id: g-itm-ITM-0002
+  input: What is the unit price of BRG-00002?
+  expected: '3572.42'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0002
+- id: g-itm-ITM-0003
+  input: What is the unit price of BRG-00003?
+  expected: '230.25'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0003
+- id: g-itm-ITM-0004
+  input: What is the unit price of FST-00004?
+  expected: '3.65'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0001
+- id: g-itm-ITM-0005
+  input: What is the unit price of FST-00005?
+  expected: '17.22'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0002
+- id: g-itm-ITM-0006
+  input: What is the unit price of FST-00006?
+  expected: '1914.09'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0003
+- id: g-itm-ITM-0007
+  input: What is the unit price of HYD-00007?
+  expected: '43.9'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0001
+- id: g-itm-ITM-0008
+  input: What is the unit price of HYD-00008?
+  expected: '100.55'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0002
+- id: g-itm-ITM-0009
+  input: What is the unit price of HYD-00009?
+  expected: '7.99'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0003
+- id: g-itm-ITM-0010
+  input: What is the unit price of PNU-00010?
+  expected: '165.97'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0001
+- id: g-itm-ITM-0011
+  input: What is the unit price of PNU-00011?
+  expected: '1805.68'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0002
+- id: g-itm-ITM-0012
+  input: What is the unit price of PNU-00012?
+  expected: '1742.67'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0003
+- id: g-itm-ITM-0013
+  input: What is the unit price of MOT-00013?
+  expected: '117.38'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0001
+- id: g-itm-ITM-0014
+  input: What is the unit price of MOT-00014?
+  expected: '147.18'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0002
+- id: g-itm-ITM-0015
+  input: What is the unit price of MOT-00015?
+  expected: '1565.38'
+  grader: contains
+  role: requester
+  tenant_id: TEN-0003
+- id: g-con-CON-0001
+  input: What are the terms of the contract 'Master Supply Agreement — Harbor Fabrication
+    AB'?
+  expected: '90'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-con-CON-0002
+  input: What are the terms of the contract 'Framework Purchase Agreement — Calder
+    Precision GmbH'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-con-CON-0003
+  input: What are the terms of the contract 'Master Supply Agreement — Apex Automation
+    Sdn Bhd'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-con-CON-0004
+  input: What are the terms of the contract 'Framework Purchase Agreement — Linden
+    Automation Sdn Bhd'?
+  expected: '90'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-con-CON-0005
+  input: What are the terms of the contract 'Services Agreement — Granite Fabrication
+    AB'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-con-CON-0006
+  input: What are the terms of the contract 'Framework Purchase Agreement — Harbor
+    Systems Ltd.'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-con-CON-0007
+  input: What are the terms of the contract 'Master Supply Agreement — Meridian Forge
+    Inc.'?
+  expected: '60'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-con-CON-0008
+  input: What are the terms of the contract 'Services Agreement — Rampart Engineering
+    Inc.'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-con-CON-0009
+  input: What are the terms of the contract 'Framework Purchase Agreement — Vertex
+    Industrial GmbH'?
+  expected: '60'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-con-CON-0010
+  input: What are the terms of the contract 'Services Agreement — Harbor Industrial
+    Sdn Bhd'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-con-CON-0011
+  input: What are the terms of the contract 'Category Supply Agreement — Vanguard
+    Precision Inc.'?
+  expected: '45'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-con-CON-0012
+  input: What are the terms of the contract 'Services Agreement — Argent Materials
+    Inc.'?
+  expected: '30'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-con-CON-0013
+  input: What are the terms of the contract 'Services Agreement — Cascade Components
+    Pte Ltd'?
+  expected: '30'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0003
+- id: g-con-CON-0014
+  input: What are the terms of the contract 'Services Agreement — Stellar Casting
+    GmbH'?
+  expected: '90'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-con-CON-0015
+  input: What are the terms of the contract 'Category Supply Agreement — Orion Precision
+    B.V.'?
+  expected: '30'
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0002
+- id: g-pol-bids
+  input: How many competitive bids does the policy require?
+  expected: three
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-pol-nopo
+  input: What does the policy say about purchase orders and payment?
+  expected: No PO
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-pol-conduct
+  input: What does the supplier code of conduct cover?
+  expected: Code of Conduct
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-pol-approval
+  input: Who approves purchases under the approval matrix?
+  expected: approval
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001
+- id: g-pol-risk
+  input: What do the risk thresholds say about high-risk suppliers?
+  expected: risk
+  grader: contains
+  role: category_manager
+  tenant_id: TEN-0001

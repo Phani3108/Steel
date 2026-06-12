@@ -16,7 +16,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from jai_api import queries
+from jai_api import chat, queries
 from jai_api.db import ping
 
 Dimension = Literal["tenant_id", "agent", "run_id", "model_group"]
@@ -39,7 +39,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-        allow_methods=["GET"],
+        allow_methods=["GET", "POST"],
         allow_headers=["*"],
     )
 
@@ -72,6 +72,24 @@ def create_app() -> FastAPI:
     def audit_verify() -> Any:
         try:
             return queries.verify_chain()
+        except (psycopg.Error, OSError) as exc:
+            return _pg_unavailable(exc)
+
+    @app.get("/meta")
+    def meta() -> Any:
+        try:
+            tenants = queries.tenants()
+        except (psycopg.Error, OSError):
+            tenants = []  # cortex not ingested yet — the console renders a hint
+        return {"tenants": tenants, "roles": ["requester", "category_manager", "cpo"]}
+
+    @app.post("/chat")
+    def post_chat(req: chat.ChatRequest) -> Any:
+        try:
+            return chat.run_chat(req)
+        except FileNotFoundError as exc:
+            return JSONResponse(status_code=503, content={"error": "agent_unavailable",
+                                                          "detail": str(exc)})
         except (psycopg.Error, OSError) as exc:
             return _pg_unavailable(exc)
 

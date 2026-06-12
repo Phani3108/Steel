@@ -1,30 +1,25 @@
 [project]
-name = "jai-api"
+name = "jai-cortex"
 version = "0.1.0"
-description = "JAI control plane — FastAPI app exposing runs, costs, approvals, and registry to the console"
+description = "jai-cortex — the chassis: permission-aware procurement semantic layer with hybrid retrieval"
 requires-python = ">=3.12"
 dependencies = [
     "jai-manifest",
     "jai-gateway",
-    "jai-cortex",
-    "jai-engine",
-    "fastapi>=0.115",
-    "uvicorn>=0.32",
     "psycopg[binary]>=3.2",
+    "pgvector>=0.3",
 ]
 
 [project.scripts]
-jai-api = "jai_api.main:serve"
+jai-cortex = "jai_cortex.cli:main"
 
 [tool.uv.sources]
 jai-manifest = { workspace = true }
 jai-gateway = { workspace = true }
-jai-cortex = { workspace = true }
-jai-engine = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jai_api"]
+packages = ["src/jai_cortex"]

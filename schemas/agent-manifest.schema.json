@@ -237,6 +237,15 @@
       "title": "Name",
       "type": "string"
     },
+    "pipeline": {
+      "default": "direct",
+      "enum": [
+        "direct",
+        "rag"
+      ],
+      "title": "Pipeline",
+      "type": "string"
+    },
     "prompt": {
       "$ref": "#/$defs/PromptRef"
     },

@@ -106,3 +106,10 @@ def verify_chain() -> dict[str, Any]:
             expected_prev = row["hash"]
             checked += 1
     return {"ok": True, "checked": checked, "broken_at_seq": None}
+
+
+def tenants() -> list[dict[str, Any]]:
+    """Tenant list for the console's persona switcher (cortex's published read contract)."""
+    with connect() as conn:
+        rows = conn.execute("SELECT id, name FROM cortex.tenants ORDER BY id").fetchall()
+    return list(rows)

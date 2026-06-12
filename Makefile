@@ -28,8 +28,11 @@ smoke: ## Demo 0: echo agent runs from manifest through gateway; audit + ledger 
 
 demo-p0: smoke ## Alias for the P0 demo
 
-evals: ## Run eval suites against real models (needs API keys; JAI_MOCK=0)
-	uv run jai-dyno run evals/
+demo-p1: ## Demo 1: supplier intelligence — one agent, four personas, permission-aware
+	uv run python parts/engine/demo/demo_1.py
+
+evals: ## Run all eval suites (keyless: measures retrieval + permission correctness)
+	uv run python evals/run_suite1.py
 
 schemas: ## Export JSON Schemas from jai-manifest pydantic models
 	uv run jai-manifest export-schemas --out schemas/

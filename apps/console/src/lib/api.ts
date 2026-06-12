@@ -110,3 +110,44 @@ export function fmtTs(ts: string | undefined): string {
     second: "2-digit",
   });
 }
+
+/** Persona metadata from GET /meta. */
+export interface Meta {
+  tenants: { id: string; name: string }[];
+  roles: string[];
+}
+
+export async function fetchMeta(): Promise<Meta> {
+  return await getJSON<Meta>("/meta");
+}
+
+/** One citation on a chat answer (mirrors jai-cortex's Citation). */
+export interface ChatCitation {
+  source_type: string;
+  source_id: string;
+  snippet?: string;
+}
+
+export interface ChatReply {
+  text: string;
+  citations: ChatCitation[];
+  refused: boolean;
+  cost_usd: number;
+  run_id: string;
+}
+
+export async function postChat(
+  message: string,
+  role: string,
+  tenantId: string,
+): Promise<ChatReply> {
+  const res = await fetch(`${API_BASE}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, role, tenant_id: tenantId }),
+  });
+  if (!res.ok) {
+    throw new Error(`POST /chat -> HTTP ${res.status}`);
+  }
+  return (await res.json()) as ChatReply;
+}

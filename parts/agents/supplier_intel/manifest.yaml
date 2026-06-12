@@ -1,0 +1,24 @@
+# agent-supplier-intel — the first knowledge agent in the catalog.
+# Answers supplier/contract/policy/news questions from the cortex semantic layer,
+# with citations, inside the asking human's permissions.
+api_version: jai/v1
+name: agent-supplier-intel
+description: >
+  Supplier intelligence analyst: answers questions about suppliers, items, contracts,
+  policies, and risk signals strictly from retrieved context, with citations. Inherits
+  the asker's role — out-of-permission questions are refused by retrieval, not by tact.
+autonomy_level: 2
+pipeline: rag
+model:
+  group: reasoning
+  max_tokens: 1024
+  budget_usd_per_task: 0.10
+prompt:
+  path: prompts/supplier_intel.md
+  version: "1"
+guardrails:
+  input_screening: true
+  output_validation: true
+metrics:
+  eval_pass_rate: 0.90
+  max_policy_violations: 0

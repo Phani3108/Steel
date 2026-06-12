@@ -10,7 +10,7 @@ function against the same manifest (ADR-004: the compile step is the swap point)
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Protocol, TypedDict
 
@@ -76,6 +76,10 @@ class EngineState(TypedDict):
     input: str
     output: str
     ctx: dict[str, Any]
+    facts: list[dict[str, Any]]
+    chunks: list[dict[str, Any]]
+    citations: list[dict[str, Any]]
+    refused: bool
 
 
 @dataclass(frozen=True)
@@ -85,6 +89,15 @@ class RunResult:
     text: str
     cost_usd: float
     run_id: str
+    citations: list[dict[str, Any]] = field(default_factory=list)
+    refused: bool = False
+
+
+class RetrieverPort(Protocol):
+    """What a rag-pipeline retriever must return (duck-typed: jai-cortex satisfies it,
+    but the engine never imports it — the assembler injects)."""
+
+    def __call__(self, ctx: RunContext, query: str) -> Any: ...
 
 
 def _audit(
@@ -168,6 +181,10 @@ class CompiledAgent:
             "input": input_text,
             "output": "",
             "ctx": ctx.model_dump(mode="json"),
+            "facts": [],
+            "chunks": [],
+            "citations": [],
+            "refused": False,
         }
         try:
             final: EngineState = self.graph.invoke(state, config)
@@ -182,7 +199,13 @@ class CompiledAgent:
             raise
         cost = float(final["ctx"].get(_COST_KEY, 0.0))
         _audit(self.blackbox, ctx, action="run.end", outcome="ok", detail={"cost_usd": cost})
-        return RunResult(text=final["output"], cost_usd=cost, run_id=ctx.run_id)
+        return RunResult(
+            text=final["output"],
+            cost_usd=cost,
+            run_id=ctx.run_id,
+            citations=list(final.get("citations", [])),
+            refused=bool(final.get("refused", False)),
+        )
 
     def close(self) -> None:
         """Release the checkpointer's Postgres connection, if one was opened."""
@@ -199,8 +222,15 @@ def compile_manifest(
     blackbox: BlackboxPort,
     meter: MeterPort,
     prompt_base: Path,
+    retriever: RetrieverPort | None = None,
 ) -> CompiledAgent:
-    """Compile a manifest into a LangGraph agent: guard_in -> model -> guard_out."""
+    """Compile a manifest into a LangGraph agent.
+
+    pipeline "direct": guard_in -> model -> guard_out
+    pipeline "rag":    guard_in -> retrieve -> synthesize -> guard_out (needs retriever)
+    """
+    if manifest.pipeline == "rag" and retriever is None:
+        raise ValueError(f"manifest {manifest.name!r} has pipeline 'rag'; pass retriever=")
     system_prompt = (Path(prompt_base) / manifest.prompt.path).read_text()
 
     def guard_in(state: EngineState) -> dict[str, Any]:
@@ -274,13 +304,102 @@ def compile_manifest(
             raise GuardrailViolation("output rejected: empty")
         return {}
 
+    def retrieve(state: EngineState) -> dict[str, Any]:
+        ctx = _ctx_of(state)
+        assert retriever is not None  # guarded at compile time
+        result = retriever(ctx, state["input"])
+        refused = bool(getattr(result, "refused", False))
+        facts = list(getattr(result, "facts", []))
+        chunks = [
+            c.model_dump() if hasattr(c, "model_dump") else dict(c)
+            for c in getattr(result, "chunks", [])
+        ]
+        citations = [
+            c.model_dump() if hasattr(c, "model_dump") else dict(c)
+            for c in getattr(result, "citations", [])
+        ]
+        _audit(
+            blackbox,
+            ctx,
+            action="retrieve",
+            outcome="denied" if refused else "ok",
+            input_sha256=sha256_hex(state["input"]),
+            detail={"n_facts": len(facts), "n_chunks": len(chunks), "refused": refused},
+        )
+        if refused:
+            reason = getattr(result, "refusal_reason", None) or "not permitted"
+            return {"refused": True, "citations": [], "output": f"REFUSED: {reason}"}
+        return {"facts": facts, "chunks": chunks, "citations": citations}
+
+    def synthesize(state: EngineState) -> dict[str, Any]:
+        if state["refused"]:
+            return {}  # refusal text already set by retrieve
+        ctx = _ctx_of(state)
+        if os.environ.get("JAI_MOCK", "1") == "1":
+            # Keyless determinism: render the retrieved context verbatim so eval
+            # graders measure retrieval correctness, not mock-string phrasing.
+            n = len(state["facts"]) + len(state["chunks"])
+            lines = [f"Based on {n} sources:"]
+            for f in state["facts"]:
+                lines.append("- " + "; ".join(f"{k}={v}" for k, v in f.items()))
+            for c in state["chunks"]:
+                lines.append(f"- [{c['doc_type']}:{c['source_id']}] {c['text'][:200]}")
+            return {"output": "\n".join(lines)}
+        context_lines = [
+            "CONTEXT — answer only from this:",
+            *(f"FACT {f}" for f in state["facts"]),
+            *(f"EXCERPT [{c['doc_type']}:{c['source_id']}] {c['text']}" for c in state["chunks"]),
+        ]
+        response = gateway.complete(
+            ctx,
+            group=manifest.model.group,
+            messages=[
+                {"role": "system", "content": system_prompt + "\n\n" + "\n".join(context_lines)},
+                {"role": "user", "content": state["input"]},
+            ],
+            max_tokens=manifest.model.max_tokens,
+        )
+        _audit(
+            blackbox,
+            ctx,
+            action="model.call",
+            outcome="ok",
+            input_sha256=sha256_hex(state["input"]),
+            detail={
+                "model": response.model,
+                "group": response.group,
+                "input_tokens": response.input_tokens,
+                "output_tokens": response.output_tokens,
+                "cost_usd": response.cost_usd,
+            },
+        )
+        meter.record(
+            ctx,
+            action="model.call",
+            model=response.model,
+            model_group=response.group,
+            input_tokens=response.input_tokens,
+            output_tokens=response.output_tokens,
+            cost_usd=response.cost_usd,
+        )
+        new_ctx = dict(state["ctx"])
+        new_ctx[_COST_KEY] = float(new_ctx.get(_COST_KEY, 0.0)) + response.cost_usd
+        return {"output": response.text, "ctx": new_ctx}
+
     builder: StateGraph = StateGraph(EngineState)
     builder.add_node("guard_in", guard_in)
-    builder.add_node("model", model)
     builder.add_node("guard_out", guard_out)
     builder.add_edge(START, "guard_in")
-    builder.add_edge("guard_in", "model")
-    builder.add_edge("model", "guard_out")
+    if manifest.pipeline == "rag":
+        builder.add_node("retrieve", retrieve)
+        builder.add_node("synthesize", synthesize)
+        builder.add_edge("guard_in", "retrieve")
+        builder.add_edge("retrieve", "synthesize")
+        builder.add_edge("synthesize", "guard_out")
+    else:
+        builder.add_node("model", model)
+        builder.add_edge("guard_in", "model")
+        builder.add_edge("model", "guard_out")
     builder.add_edge("guard_out", END)
 
     checkpointer = _postgres_checkpointer()

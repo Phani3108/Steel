@@ -13,6 +13,7 @@ members = [
     "parts/foundry",
     "parts/dyno",
     "parts/engine",
+    "parts/cortex",
     "apps/api",
 ]
 
@@ -48,6 +49,7 @@ root_packages = [
     "jai_foundry",
     "jai_dyno",
     "jai_engine",
+    "jai_cortex",
 ]
 
 [[tool.importlinter.contracts]]
@@ -61,6 +63,7 @@ forbidden_modules = [
     "jai_foundry",
     "jai_dyno",
     "jai_engine",
+    "jai_cortex",
 ]
 
 [[tool.importlinter.contracts]]
@@ -83,6 +86,7 @@ source_modules = [
     "jai_foundry",
     "jai_dyno",
     "jai_engine",
+    "jai_cortex",
 ]
 forbidden_modules = [
     "jai_gateway._internal",
@@ -91,6 +95,7 @@ forbidden_modules = [
     "jai_foundry._internal",
     "jai_dyno._internal",
     "jai_engine._internal",
+    "jai_cortex._internal",
 ]
 ignore_imports = [
     "jai_gateway.* -> jai_gateway._internal",
@@ -99,6 +104,7 @@ ignore_imports = [
     "jai_foundry.* -> jai_foundry._internal",
     "jai_dyno.* -> jai_dyno._internal",
     "jai_engine.* -> jai_engine._internal",
+    "jai_cortex.* -> jai_cortex._internal",
 ]
 # Parts without an _internal module yet must not fail the contract
 unmatched_ignore_imports_alerting = "none"

@@ -12,10 +12,12 @@ const LINKS = [
   { href: "/", label: "Catalog" },
   { href: "/network", label: "Fleet" },
   { href: "/orchestrate", label: "Mission" },
+  { href: "/negotiate", label: "Negotiate" },
   { href: "/chat", label: "Ask" },
   { href: "/approvals", label: "Gates" },
   { href: "/telemetry", label: "Telemetry" },
   { href: "/runs", label: "Audit" },
+  { href: "/studio", label: "Studio" },
 ] as const;
 
 function isActive(pathname: string, href: string): boolean {
@@ -26,7 +28,7 @@ function isActive(pathname: string, href: string): boolean {
 export function Nav() {
   const pathname = usePathname();
   return (
-    <nav className="flex items-center gap-0.5 text-sm">
+    <nav className="flex flex-wrap items-center gap-x-0.5 gap-y-1 text-sm">
       {LINKS.map(({ href, label }) => {
         const active = isActive(pathname, href);
         return (

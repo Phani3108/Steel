@@ -70,6 +70,11 @@ class Mandate(BaseModel):
     max_spend_usd: float | None = None
     max_rounds: int | None = None
     notes: str = ""
+    # Negotiation strategy (fractions of list price): aim for target, never close above
+    # walkaway. max_spend_usd remains the absolute hard cap, enforced by the governor.
+    target_price_pct: float | None = None
+    walkaway_price_pct: float | None = None
+    payment_terms_target_days: int | None = None
 
 
 class MetricTargets(BaseModel):
@@ -96,8 +101,9 @@ class AgentManifest(BaseModel):
     # Which engine graph shape this agent compiles to. "direct" = guard→model→guard;
     # "rag" = guard→retrieve→synthesize→guard (requires an injected retriever);
     # "sourcing" = the durable, gated RFx workflow (requires tools/governor/brakes);
-    # "orchestrate" = the coordinator: triage → fan-out specialists → sourcing.
-    pipeline: Literal["direct", "rag", "sourcing", "orchestrate"] = "direct"
+    # "orchestrate" = the coordinator: triage → fan-out specialists → sourcing;
+    # "negotiate" = bounded-mandate multi-round negotiation against a seller over A2A.
+    pipeline: Literal["direct", "rag", "sourcing", "orchestrate", "negotiate"] = "direct"
     # Skills this agent exposes on the mesh (A2A skill ids it can be dispatched for).
     skills: list[str] = Field(default_factory=list)
 

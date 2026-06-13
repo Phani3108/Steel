@@ -17,6 +17,7 @@ from typing import Any
 from jai_blackbox import BlackBox
 from jai_brakes import Brakes
 from jai_cortex import Cortex
+from jai_engine.negotiate import Negotiator, compile_negotiator
 from jai_engine.orchestrate import Orchestrator, compile_orchestrator
 from jai_engine.sourcing import SourcingAgent, compile_sourcing
 from jai_gateway import GatewayClient
@@ -41,6 +42,7 @@ AGENT_SYSTEMS = {
     "agent-intake-triage": "NETWORK",
     "agent-risk-sentinel": "NETWORK",
     "agent-spend-analyst": "NETWORK",
+    "agent-negotiator": "NETWORK",
 }
 
 SOURCING_THRESHOLD_USD = 10_000.0
@@ -60,6 +62,8 @@ class Fleet:
     mesh: Mesh
     orchestrator: Orchestrator
     sourcing: SourcingAgent
+    negotiator: Negotiator
+    sellers: list[dict[str, Any]]  # [{skill_id, name}] — the negotiation counterparties
     brakes: Brakes
     blackbox: BlackBox
     registry: Registry
@@ -172,6 +176,24 @@ def build_fleet() -> Fleet:
         sourcing_threshold_usd=SOURCING_THRESHOLD_USD,
     )
 
+    # ── negotiation counterparties: three seller personas on the mesh ──
+    personas = [json.loads(line)
+                for line in (SEED / "seller_personas.jsonl").read_text().splitlines()]
+    sellers: list[dict[str, Any]] = []
+    for persona in personas[:3]:
+        slug = persona["name"].lower().replace("the ", "").replace(" ", "-")
+        skill_id = f"negotiate.{slug}"
+        card = AgentCard(name=f"seller · {persona['name']}",
+                         description=persona.get("style", ""),
+                         skills=[Skill(id=skill_id, name=persona["name"])])
+        mesh.register(card, {skill_id: _make_seller(persona)})
+        sellers.append({"skill_id": skill_id, "name": persona["name"]})
+
+    negotiator = compile_negotiator(
+        load_manifest(AGENTS / "negotiator" / "manifest.yaml"),
+        mesh=mesh, blackbox=blackbox, governor=governor,
+    )
+
     registry = Registry()
     registry.ensure_schema()
     registry.sync_agents(AGENTS, AGENT_SYSTEMS)
@@ -179,7 +201,44 @@ def build_fleet() -> Fleet:
         registry.load_scorecards(RESULTS)
 
     return Fleet(mesh=mesh, orchestrator=orchestrator, sourcing=sourcing,
-                 brakes=brakes, blackbox=blackbox, registry=registry, hops=hops)
+                 negotiator=negotiator, sellers=sellers, brakes=brakes, blackbox=blackbox,
+                 registry=registry, hops=hops)
+
+
+def _make_seller(persona: dict[str, Any]) -> Handler:
+    """A persona-driven seller: concedes from list toward a hidden floor by its step,
+    accepts once the buyer's offer reaches that floor. Deterministic given the round."""
+    floor_pct = float(persona["price_floor_pct"]) / 100.0   # seed stores percentages
+    step_pct = float(persona["concession_step_pct"]) / 100.0
+
+    def handler(ctx: RunContext, inp: dict[str, Any]) -> dict[str, Any]:
+        list_price = float(inp["list_price"])
+        offer = float(inp["offer"])
+        rnd = int(inp["round"])
+        floor = list_price * floor_pct
+        counter = max(floor, list_price * (1.0 - step_pct * rnd))
+        return {
+            "counter_price": round(counter, 2),
+            "accept": offer >= floor,
+            "payment_terms": int(inp.get("payment_terms_ask") or 30),
+            "persona": persona["name"],
+            "_cost_usd": 0.0,
+        }
+
+    return handler
+
+
+def run_negotiation(fleet: Fleet, ctx: RunContext, deal: dict[str, Any]) -> dict[str, Any]:
+    """Run one negotiation against a named seller and return a console-shaped payload."""
+    result = fleet.negotiator.run(ctx, deal)
+    return {
+        "status": result.status, "seller": result.seller,
+        "list_price": result.list_price, "final_price": result.final_price,
+        "savings_pct": result.savings_pct, "payment_terms_days": result.payment_terms_days,
+        "rounds": result.rounds, "mandate_cap": result.mandate_cap,
+        "breached": result.breached, "closed": result.closed,
+        "transcript": result.transcript, "run_id": ctx.run_id,
+    }
 
 
 _DIRS = {
@@ -237,6 +296,44 @@ def run_orchestration(
     }
 
 
+def maturity_ladder() -> list[dict[str, Any]]:
+    """Each agent's autonomy promotion decision: did its committed scorecard earn it a
+    level? The eval-gated maturity ladder — promotion is proven, never edited in."""
+    from jai_dyno.scorecard import Scorecard, promotion_gate
+
+    # Collect the best committed scorecard per agent across all result files.
+    best: dict[str, dict[str, Any]] = {}
+    for path in sorted(RESULTS.glob("*.json")):
+        raw = json.loads(path.read_text())
+        for card in raw if isinstance(raw, list) else [raw]:
+            agent = card.get("agent")
+            if agent and card.get("pass_rate", 0) >= best.get(agent, {}).get("pass_rate", -1):
+                best[agent] = card
+
+    ladder: list[dict[str, Any]] = []
+    for adir in sorted(AGENTS.iterdir()):
+        manifest_path = adir / "manifest.yaml"
+        if not manifest_path.is_dir() and manifest_path.exists():
+            manifest = load_manifest(manifest_path)
+            card_dict = best.get(manifest.name)
+            entry = {"agent": manifest.name, "current_level": int(manifest.autonomy_level),
+                     "has_scorecard": card_dict is not None}
+            if card_dict:
+                card = Scorecard.model_validate({
+                    "agent": manifest.name, "suite": card_dict.get("suite", "?"),
+                    "n_cases": card_dict.get("n_cases", 0),
+                    "n_passed": card_dict.get("n_passed", 0),
+                    "pass_rate": card_dict.get("pass_rate", 0.0),
+                    "policy_violations": card_dict.get("policy_violations", 0),
+                })
+                decision = promotion_gate(manifest, card)
+                entry.update(pass_rate=card.pass_rate, promote=decision.promote,
+                             to_level=int(decision.to_level) if decision.to_level else None,
+                             reasons=decision.reasons)
+            ladder.append(entry)
+    return ladder
+
+
 def network_topology() -> dict[str, Any]:
     """The static fleet wiring the /network view renders (nodes + skill edges)."""
     nodes = [
@@ -253,9 +350,13 @@ def network_topology() -> dict[str, Any]:
          "role": "worker"},
         {"id": "agent-supplier-intel", "label": "Supplier Intel", "system": "CHASSIS",
          "role": "worker"},
+        {"id": "agent-negotiator", "label": "Negotiator", "system": "NETWORK",
+         "role": "specialist"},
         {"id": "mcp-sourcing-events", "label": "sourcing-events", "system": "DRIVETRAIN",
          "role": "tool"},
         {"id": "jai-cortex", "label": "cortex", "system": "CHASSIS", "role": "knowledge"},
+        {"id": "seller-personas", "label": "seller personas", "system": "DRIVETRAIN",
+         "role": "counterparty"},
     ]
     edges = [
         {"source": "human", "target": "agent-orchestrator", "label": "procure.orchestrate"},
@@ -266,6 +367,8 @@ def network_topology() -> dict[str, Any]:
         {"source": "agent-sourcing", "target": "mcp-sourcing-events", "label": "rfx.*"},
         {"source": "agent-supplier-intel", "target": "jai-cortex", "label": "retrieve"},
         {"source": "human", "target": "agent-supplier-intel", "label": "chat"},
+        {"source": "human", "target": "agent-negotiator", "label": "negotiate.run"},
+        {"source": "agent-negotiator", "target": "seller-personas", "label": "negotiate.*"},
     ]
     return {"nodes": nodes, "edges": edges}
 

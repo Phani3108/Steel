@@ -265,3 +265,112 @@ export async function postOrchestrate(
   }
   return (await res.json()) as OrchestrateResult;
 }
+
+// ====================================================================
+// Phase-2 additions — negotiation, maturity gates, transparency, manifest.
+// Same contract as above: helpers throw on failure; callers catch and fall
+// back to a static reference so every screen stays meaningful offline.
+// ====================================================================
+
+/** One exchanged offer/counter in a negotiation transcript. */
+export interface NegotiationTurn {
+  round: number;
+  offer: number;
+  counter: number;
+  action: "counter_up" | "accept_counter" | "seller_accepts";
+}
+
+/** A seller the negotiator can engage (skill-routed). */
+export interface NegotiationSeller {
+  skill_id: string;
+  name: string;
+}
+
+/** Request body for POST /negotiate. */
+export interface NegotiationBody {
+  list_price: number;
+  seller: number;
+  tenant_id?: string;
+  role?: string;
+}
+
+/** Result of POST /negotiate (mirrors the negotiate pipeline shape). */
+export interface NegotiationResult {
+  status: "deal" | "no_deal" | "walked";
+  seller: string;
+  list_price: number;
+  final_price: number | null;
+  savings_pct: number;
+  payment_terms_days: number | null;
+  rounds: number;
+  mandate_cap: number | null;
+  breached: boolean;
+  closed: boolean;
+  transcript: NegotiationTurn[];
+  run_id: string;
+  sellers: NegotiationSeller[];
+}
+
+export async function postNegotiate(
+  body: NegotiationBody,
+): Promise<NegotiationResult> {
+  const res = await fetch(`${API_BASE}/negotiate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`POST /negotiate -> HTTP ${res.status}`);
+  }
+  return (await res.json()) as NegotiationResult;
+}
+
+/** One agent's maturity-gate row from GET /maturity. */
+export interface MaturityRow {
+  agent: string;
+  current_level: 1 | 2 | 3 | 4 | 5;
+  has_scorecard: boolean;
+  pass_rate?: number;
+  promote?: boolean;
+  to_level?: number;
+  reasons?: string[];
+}
+
+export async function fetchMaturity(): Promise<MaturityRow[]> {
+  return asList<MaturityRow>(await getJSON("/maturity"), "maturity", "agents");
+}
+
+/** EU AI Act Article 50 transparency disclosure (GET /transparency). */
+export interface Transparency {
+  ai_system: boolean;
+  notice: string;
+  regulation: string;
+  data: string;
+  human_oversight: string;
+}
+
+export async function fetchTransparency(): Promise<Transparency> {
+  return await getJSON<Transparency>("/transparency");
+}
+
+/** Result of POST /manifest/validate — a parsed/validated agent manifest. */
+export interface ManifestCheck {
+  valid: boolean;
+  name?: string;
+  autonomy_level?: number;
+  pipeline?: string;
+  skills?: string[];
+  error?: string;
+}
+
+export async function postManifestValidate(yaml: string): Promise<ManifestCheck> {
+  const res = await fetch(`${API_BASE}/manifest/validate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ yaml }),
+  });
+  if (!res.ok) {
+    throw new Error(`POST /manifest/validate -> HTTP ${res.status}`);
+  }
+  return (await res.json()) as ManifestCheck;
+}

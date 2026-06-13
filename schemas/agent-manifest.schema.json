@@ -92,6 +92,42 @@
           "default": "",
           "title": "Notes",
           "type": "string"
+        },
+        "payment_terms_target_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Terms Target Days"
+        },
+        "target_price_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Price Pct"
+        },
+        "walkaway_price_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Walkaway Price Pct"
         }
       },
       "title": "Mandate",
@@ -243,7 +279,8 @@
         "direct",
         "rag",
         "sourcing",
-        "orchestrate"
+        "orchestrate",
+        "negotiate"
       ],
       "title": "Pipeline",
       "type": "string"

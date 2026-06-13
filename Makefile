@@ -37,10 +37,20 @@ demo-p2: ## Demo 2: autonomous sourcing — gates, kill -9 resume, governor, kil
 demo-p3: ## Demo 3: the orchestrated fleet — one intake, one trace, one chain
 	uv run python parts/engine/demo/demo_3.py
 
+demo-p4: ## Demo 4: autonomous negotiation under a bounded mandate
+	uv run python parts/engine/demo/demo_4.py
+
 evals: ## Run all eval suites (keyless: deterministic policy + retrieval correctness)
 	uv run python evals/run_suite1.py
 	uv run python evals/run_suite2.py
 	uv run python evals/run_suite3.py
+	uv run python evals/run_suite4.py
+
+portability: ## Prove the manifest is the contract: suite 1 on the miniloop runtime
+	uv run python evals/run_miniloop.py
+
+maturity: ## Print the eval-gated autonomy promotion ladder
+	uv run python evals/run_maturity.py
 
 schemas: ## Export JSON Schemas from jai-manifest pydantic models
 	uv run jai-manifest export-schemas --out schemas/

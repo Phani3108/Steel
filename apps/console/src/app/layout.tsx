@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 
+import { GovernanceNotice } from "@/components/GovernanceNotice";
 import { Nav } from "@/components/Nav";
 import { TelemetryStrip } from "@/components/TelemetryStrip";
 import "./globals.css";
@@ -73,9 +74,12 @@ export default function RootLayout({
         <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-8">{children}</main>
 
         <footer className="border-t border-line/70">
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 font-mono text-[10px] tracking-wider text-ink-ghost">
+          <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 font-mono text-[10px] tracking-wider text-ink-ghost">
             <span>jai-console · personal research platform · all data synthetic</span>
-            <span className="hidden sm:inline">built like a car — six systems, one cockpit</span>
+            <span className="hidden lg:inline">built like a car — six systems, one cockpit</span>
+            <div className="ml-auto">
+              <GovernanceNotice />
+            </div>
           </div>
         </footer>
       </body>

@@ -1,0 +1,29 @@
+# agent-negotiator — Pactum-style autonomous negotiation under a bounded mandate.
+# It aims for the target, never closes above the walkaway, and CANNOT agree to any
+# price above its hard spend cap — the governor blocks that regardless of reasoning.
+api_version: jai/v1
+name: agent-negotiator
+description: >
+  Autonomous supplier negotiator: opens below target and works multiple rounds against a
+  seller to close within its ZOPA on price and payment terms — bounded by a hard mandate
+  the governor enforces. Walks away rather than breach the cap.
+autonomy_level: 3
+pipeline: negotiate
+model:
+  group: reasoning
+  max_tokens: 512
+  budget_usd_per_task: 0.20
+prompt:
+  path: prompts/negotiator.md
+  version: "1"
+skills: [negotiate.run]
+mandate:
+  max_spend_usd: 150000        # absolute hard cap — never close above this
+  max_rounds: 6
+  target_price_pct: 0.86       # aim to close at 86% of list
+  walkaway_price_pct: 0.95     # never close above 95% of list
+  payment_terms_target_days: 60
+  notes: The governor blocks any close above max_spend_usd; the agent walks instead.
+metrics:
+  eval_pass_rate: 0.90
+  max_policy_violations: 0

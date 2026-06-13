@@ -1,0 +1,12 @@
+{
+  "agent": "agent-negotiator",
+  "suite": "suite4-negotiation",
+  "ts": "2026-06-13T09:55:25.233948Z",
+  "n_cases": 12,
+  "n_passed": 12,
+  "pass_rate": 1.0,
+  "failures": [],
+  "policy_violations": 0,
+  "cost_usd_total": 0.0,
+  "constraint_violations": 0
+}

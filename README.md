@@ -6,7 +6,7 @@
 > network that runs like a well-oiled machine.
 
 All data is synthetic ([Borealis Manufacturing](docs/adr/ADR-003-single-postgres.md) is a fictional company);
-all domain models are generic.*
+all domain models are generic.
 
 ## The Parts Catalog
 
@@ -80,7 +80,7 @@ make api & make console     # the control plane (:8400) + the cockpit console (:
 ```
 
 Runs fully keyless: with `JAI_MOCK=1` every model call is served by the gateway's mock
-path, so the whole platform — audit chain, ledger, manifests, evals, the nine-screen
+path, so the whole platform — audit chain, ledger, manifests, evals, the connected
 console — is testable with zero API spend.
 
 ## Proof, not promises

@@ -17,6 +17,7 @@ from jai_manifest import RunContext
 from openai import OpenAI
 
 from jai_gateway.models import GatewayResponse
+from jai_gateway.pricing import modeled_cost
 
 DEFAULT_MOCK_RESPONSE = "jai-gateway mock response — served keyless by the LiteLLM proxy."
 
@@ -83,13 +84,19 @@ class GatewayClient:
         )
         parsed = raw.parse()
         usage = parsed.usage
+        input_tokens = usage.prompt_tokens if usage else 0
+        output_tokens = usage.completion_tokens if usage else 0
+        # Mock mode bills nothing, so model the cost from real token usage at list rates
+        # (honest, no API spend); a real proxy reports its own billed cost via the header.
+        cost = (modeled_cost(group, input_tokens, output_tokens)
+                if mocked else _cost_from_headers(raw.headers))
         return GatewayResponse(
             text=parsed.choices[0].message.content or "",
             model=parsed.model,
             group=group,
-            input_tokens=usage.prompt_tokens if usage else 0,
-            output_tokens=usage.completion_tokens if usage else 0,
-            cost_usd=0.0 if mocked else _cost_from_headers(raw.headers),
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            cost_usd=cost,
         )
 
     def embed(

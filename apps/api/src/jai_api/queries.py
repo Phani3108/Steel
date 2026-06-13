@@ -108,6 +108,52 @@ def verify_chain() -> dict[str, Any]:
     return {"ok": True, "checked": checked, "broken_at_seq": None}
 
 
+_RUN_SUMMARY_SQL = """
+SELECT
+    MIN(ts) AS first_ts, MAX(ts) AS last_ts,
+    MAX(tenant_id) AS tenant_id, COUNT(*)::int AS events,
+    MAX(outcome) FILTER (WHERE action = 'run.end') AS outcome,
+    ARRAY_AGG(DISTINCT agent) FILTER (WHERE agent IS NOT NULL) AS agents
+FROM blackbox.audit_events WHERE run_id = %(run_id)s
+"""
+
+_RUN_COST_SQL = """
+SELECT COALESCE(agent, '-') AS agent,
+       COUNT(*)::int AS calls,
+       COALESCE(SUM(input_tokens), 0)::bigint AS input_tokens,
+       COALESCE(SUM(output_tokens), 0)::bigint AS output_tokens,
+       COALESCE(SUM(cost_usd), 0)::float8 AS cost_usd
+FROM meter.task_ledger WHERE run_id = %(run_id)s
+GROUP BY 1 ORDER BY cost_usd DESC
+"""
+
+
+def run_detail(run_id: str) -> dict[str, Any]:
+    """Everything about one run, assembled for the unified run-detail view: summary,
+    the audit-event timeline, modeled cost by agent, and any approvals it touched.
+    This is the connective tissue — a run becomes one story instead of three siloes."""
+    with connect() as conn:
+        summary = conn.execute(_RUN_SUMMARY_SQL, {"run_id": run_id}).fetchone() or {}
+        events = conn.execute(_RUN_EVENTS_SQL, {"run_id": run_id}).fetchall()
+        costs = conn.execute(_RUN_COST_SQL, {"run_id": run_id}).fetchall()
+        approvals = conn.execute(
+            """SELECT id, gate, status, agent, thread_id, requested_by, decided_by,
+                      payload, ts, decided_at
+               FROM brakes.approvals WHERE run_id = %(run_id)s ORDER BY id""",
+            {"run_id": run_id},
+        ).fetchall()
+    cost_total = round(sum(float(c["cost_usd"]) for c in costs), 6)
+    return {
+        "run_id": run_id,
+        "found": bool(events),
+        "summary": {**summary, "agents": summary.get("agents") or []},
+        "events": events,
+        "costs": costs,
+        "cost_total_usd": cost_total,
+        "approvals": approvals,
+    }
+
+
 def tenants() -> list[dict[str, Any]]:
     """Tenant list for the console's persona switcher (cortex's published read contract)."""
     with connect() as conn:

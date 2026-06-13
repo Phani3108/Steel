@@ -8,6 +8,7 @@ answer 503 with a JSON error envelope and /health answers 200 with
 from __future__ import annotations
 
 import os
+import threading
 from functools import lru_cache
 from typing import Annotated, Any, Literal
 
@@ -72,9 +73,15 @@ def _pg_unavailable(exc: Exception) -> JSONResponse:
     )
 
 
+# The fleet holds shared psycopg connections (cortex, the sourcing checkpointer) that are
+# not thread-safe. FastAPI runs sync endpoints in a threadpool, so the heavy multi-agent
+# endpoints that drive the fleet are serialized with this lock.
+_run_lock = threading.Lock()
+
+
 @lru_cache(maxsize=1)
 def _fleet() -> Any:
-    """The orchestration fleet, built once and reused across /orchestrate calls."""
+    """The orchestration fleet, built once and reused. Guard mutating use with _run_lock."""
     from jai_api.fleet import build_fleet
 
     return build_fleet()
@@ -116,6 +123,13 @@ def create_app() -> FastAPI:
     def events_for_run(run_id: str) -> Any:
         try:
             return queries.run_events(run_id)
+        except (psycopg.Error, OSError) as exc:
+            return _pg_unavailable(exc)
+
+    @app.get("/runs/{run_id}/detail")
+    def run_detail(run_id: str) -> Any:
+        try:
+            return queries.run_detail(run_id)  # events + cost + approvals, one story
         except (psycopg.Error, OSError) as exc:
             return _pg_unavailable(exc)
 
@@ -167,7 +181,10 @@ def create_app() -> FastAPI:
     def network() -> Any:
         from jai_api.fleet import network_topology
 
-        return network_topology()
+        try:
+            return network_topology(_fleet())  # live: real mesh + registry + hop activity
+        except (psycopg.Error, OSError):
+            return network_topology(None)  # reference structure when the fleet can't build
 
     @app.post("/orchestrate")
     def orchestrate(req: OrchestrateRequest) -> Any:
@@ -184,7 +201,8 @@ def create_app() -> FastAPI:
                 "line_items": [{"sku": "REQ", "qty": 1}],
                 "requested_by": "console", "simulate_bids": 3,
             }
-            return run_orchestration(fleet, ctx, intake, auto_approve=req.auto_approve)
+            with _run_lock:
+                return run_orchestration(fleet, ctx, intake, auto_approve=req.auto_approve)
         except (psycopg.Error, OSError) as exc:
             return _pg_unavailable(exc)
 
@@ -202,8 +220,9 @@ def create_app() -> FastAPI:
                                                               "detail": "fleet has no sellers"})
             seller = sellers[req.seller % len(sellers)]
             ctx = RunContext(tenant_id=req.tenant_id, actor=Actor(id="console", role=req.role))
-            payload = run_negotiation(fleet, ctx, {"list_price": req.list_price,
-                                                   "seller_skill": seller["skill_id"]})
+            with _run_lock:
+                payload = run_negotiation(fleet, ctx, {"list_price": req.list_price,
+                                                       "seller_skill": seller["skill_id"]})
             payload["sellers"] = sellers
             return payload
         except (psycopg.Error, OSError) as exc:

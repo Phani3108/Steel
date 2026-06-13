@@ -7,6 +7,7 @@ from typing import Any
 import pytest
 from jai_gateway import BudgetExceededError, GatewayClient
 from jai_gateway.client import MOCK_EMBED_DIM
+from jai_gateway.pricing import modeled_cost
 from jai_manifest import RunContext
 
 
@@ -92,14 +93,15 @@ def test_metadata_tags_attached_via_extra_body() -> None:
     assert "agent:agent-test" in tags
 
 
-def test_mock_path_sends_mock_response_and_costs_zero() -> None:
+def test_mock_path_sends_mock_response_and_models_cost_from_tokens() -> None:
     chat = FakeEndpoint(FakeRaw(chat_parsed(), headers={"x-litellm-response-cost": "0.42"}))
     client, chat, _ = make_client(mock=True, chat=chat)
     resp = client.complete(
         make_ctx(budget=1.0), group="fast", messages=MESSAGES, mock_response="hello"
     )
     assert chat.calls[0]["extra_body"]["mock_response"] == "hello"
-    assert resp.cost_usd == 0.0  # mock mode ignores any cost header
+    # Mock mode ignores any billed-cost header and MODELS cost from real token usage.
+    assert resp.cost_usd == modeled_cost("fast", 12, 7) > 0.0
     assert resp.text == "stub answer"
     assert resp.group == "fast"
     assert resp.model == "provider/model-x"
@@ -111,7 +113,7 @@ def test_explicit_mock_response_forces_mock_even_when_client_is_live() -> None:
     client, chat, _ = make_client(mock=False, chat=chat)
     resp = client.complete(make_ctx(), group="fast", messages=MESSAGES, mock_response="canned")
     assert chat.calls[0]["extra_body"]["mock_response"] == "canned"
-    assert resp.cost_usd == 0.0
+    assert resp.cost_usd == modeled_cost("fast", 12, 7)  # modeled, not the header
 
 
 def test_live_path_reads_cost_header_and_sends_no_mock_response() -> None:

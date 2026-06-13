@@ -100,3 +100,13 @@ def test_audit_verify_recomputes_intact_chain(
     resp = client.get("/audit/verify")
     assert resp.status_code == 200
     assert resp.json() == {"ok": True, "checked": 3, "broken_at_seq": None}
+
+
+def test_network_reference_topology_when_fleet_unavailable() -> None:
+    """Without a live fleet, /network returns the canonical structure marked not-live."""
+    from jai_api.fleet import network_topology
+
+    topo = network_topology(None)
+    assert topo["live"] is False
+    assert {n["id"] for n in topo["nodes"]} >= {"agent-orchestrator", "agent-negotiator"}
+    assert all("source" in e and "target" in e for e in topo["edges"])

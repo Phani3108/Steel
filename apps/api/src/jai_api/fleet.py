@@ -20,7 +20,7 @@ from jai_cortex import Cortex
 from jai_engine.negotiate import Negotiator, compile_negotiator
 from jai_engine.orchestrate import Orchestrator, compile_orchestrator
 from jai_engine.sourcing import SourcingAgent, compile_sourcing
-from jai_gateway import GatewayClient
+from jai_gateway import GatewayClient, estimate_tokens, modeled_cost
 from jai_governor import Governor
 from jai_manifest import AgentManifest, AuditEvent, RunContext, load_manifest
 from jai_mcp.registry import in_process_tools
@@ -95,30 +95,34 @@ def build_fleet() -> Fleet:
     mesh = Mesh(on_hop=hops.append)
 
     # ── specialist handlers ──
-    # Each writes one audit event under its OWN child agent and meters a nominal action,
-    # so a single run_id carries the whole fleet's footprint in one chain and one rollup.
-    def _record(ctx: RunContext, action: str, detail: dict, cost: float = 0.0) -> None:
+    # Each writes one audit event under its OWN child agent and meters its work with a
+    # MODELED cost (real per-model rates × estimated tokens — honest, no API spend), so a
+    # single run_id carries the whole fleet's footprint in one chain and one cost rollup.
+    def _record(ctx: RunContext, action: str, detail: dict, *, group: str,
+                in_text: str, out_text: str) -> float:
+        in_tok, out_tok = estimate_tokens(in_text), estimate_tokens(out_text)
+        cost = modeled_cost(group, in_tok, out_tok)
         blackbox.append(AuditEvent(
             tenant_id=ctx.tenant_id, actor_id=ctx.actor.id, actor_role=ctx.actor.role,
             agent=ctx.agent, run_id=ctx.run_id, trace_id=ctx.trace_id,
             action=action, outcome="ok", detail=detail,
         ))
-        meter.record(ctx, action=action, model=None, model_group=None,
-                     input_tokens=0, output_tokens=0, cost_usd=cost, detail=detail)
+        meter.record(ctx, action=action, model=group, model_group=group,
+                     input_tokens=in_tok, output_tokens=out_tok, cost_usd=cost, detail=detail)
+        return cost
 
     def triage_handler(ctx: RunContext, inp: dict[str, Any]) -> dict[str, Any]:
         est = float(inp.get("est_value_usd") or 0)
         decision = governor.check(ctx, "intake.approve", {"est_value_usd": est})
         route = "sourcing_required" if est >= SOURCING_THRESHOLD_USD else "auto_approved"
         cmp = "≥" if route == "sourcing_required" else "<"
-        _record(ctx, "skill.triage", {"route": route})
         thr = f"${SOURCING_THRESHOLD_USD:,.0f}"
-        return {
-            "route": route,
-            "reason": f"est ${est:,.0f} {cmp} {thr} competition threshold",
-            "policy_version": decision.policy_version,
-            "_cost_usd": 0.0,
-        }
+        reason = f"est ${est:,.0f} {cmp} {thr} competition threshold"
+        in_text = f"{inp.get('title', '')} {inp.get('category', '')} {est}"
+        cost = _record(ctx, "skill.triage", {"route": route}, group="fast",
+                       in_text=in_text, out_text=reason)
+        return {"route": route, "reason": reason,
+                "policy_version": decision.policy_version, "_cost_usd": cost}
 
     def risk_handler(ctx: RunContext, inp: dict[str, Any]) -> dict[str, Any]:
         category = inp.get("category") or ""
@@ -129,30 +133,35 @@ def build_fleet() -> Fleet:
             return {"summary": "no suppliers found for category", "_cost_usd": 0.0}
         supplier = next((s for s in suppliers if s.get("red_flag")), suppliers[0])
         result = cortex.retrieve(ctx, f"news and risk signals about {supplier['name']}")
-        _record(ctx, "skill.risk", {"supplier": supplier["name"]})
         if getattr(result, "refused", False):
-            return {"summary": f"risk read not permitted for role {ctx.actor.role!r}",
-                    "refused": True, "_cost_usd": 0.0}
+            summary = f"risk read not permitted for role {ctx.actor.role!r}"
+            cost = _record(ctx, "skill.risk", {"supplier": supplier["name"], "refused": True},
+                           group="reasoning", in_text=supplier["name"], out_text=summary)
+            return {"summary": summary, "refused": True, "_cost_usd": cost}
         signals = [f for f in result.facts if f.get("signal")]
         adverse = [s for s in signals if s.get("signal") != "positive"]
         head = (adverse or signals or [{}])[0].get("headline", "no adverse signals")
         cites = [{"source_type": c.source_type, "source_id": c.source_id}
                  for c in result.citations[:4]]
         summary = f"{supplier['name']}: {len(adverse)} adverse / {len(signals)} signals — {head}"
-        return {
-            "summary": summary,
-            "supplier": supplier["name"], "adverse": len(adverse), "signals": len(signals),
-            "citations": cites, "_cost_usd": 0.0,
-        }
+        cost = _record(ctx, "skill.risk", {"supplier": supplier["name"]}, group="reasoning",
+                       in_text=str(result.facts)[:600], out_text=summary)
+        return {"summary": summary, "supplier": supplier["name"], "adverse": len(adverse),
+                "signals": len(signals), "citations": cites, "_cost_usd": cost}
 
     def spend_handler(ctx: RunContext, inp: dict[str, Any]) -> dict[str, Any]:
         cube = spend["spend_cube"](ctx.tenant_id, ctx.actor.role, by="category")
-        _record(ctx, "skill.spend", {"by": "category"})
         if isinstance(cube, dict) and cube.get("error"):
-            return {"summary": f"spend read unavailable: {cube['error']}", "_cost_usd": 0.0}
+            summary = f"spend read unavailable: {cube['error']}"
+            cost = _record(ctx, "skill.spend", {"error": True}, group="fast",
+                           in_text="spend cube by category", out_text=summary)
+            return {"summary": summary, "_cost_usd": cost}
         top = cube[:3] if isinstance(cube, list) else []
         parts = ", ".join(f"{r['key']}=${float(r['total_usd']):,.0f}" for r in top)
-        return {"summary": f"top categories by spend: {parts}", "top": top, "_cost_usd": 0.0}
+        summary = f"top categories by spend: {parts}"
+        cost = _record(ctx, "skill.spend", {"by": "category"}, group="fast",
+                       in_text=str(top)[:600], out_text=summary)
+        return {"summary": summary, "top": top, "_cost_usd": cost}
 
     specialists = {
         "agent-intake-triage": ("intake.triage", triage_handler),
@@ -222,7 +231,8 @@ def _make_seller(persona: dict[str, Any]) -> Handler:
             "accept": offer >= floor,
             "payment_terms": int(inp.get("payment_terms_ask") or 30),
             "persona": persona["name"],
-            "_cost_usd": 0.0,
+            # Modeled cost of the negotiator's per-round reasoning (no API spend).
+            "_cost_usd": modeled_cost("reasoning", 120, 40),
         }
 
     return handler
@@ -334,8 +344,8 @@ def maturity_ladder() -> list[dict[str, Any]]:
     return ladder
 
 
-def network_topology() -> dict[str, Any]:
-    """The static fleet wiring the /network view renders (nodes + skill edges)."""
+def _reference_topology() -> dict[str, Any]:
+    """The canonical designed wiring (nodes + skill edges) — the structure of the fleet."""
     nodes = [
         {"id": "human", "label": "Human (CPO)", "system": "COCKPIT", "role": "operator"},
         {"id": "agent-orchestrator", "label": "Orchestrator", "system": "NETWORK",
@@ -371,6 +381,36 @@ def network_topology() -> dict[str, Any]:
         {"source": "agent-negotiator", "target": "seller-personas", "label": "negotiate.*"},
     ]
     return {"nodes": nodes, "edges": edges}
+
+
+def network_topology(fleet: Fleet | None = None) -> dict[str, Any]:
+    """The fleet graph the console renders. The wiring is the design (canonical), but the
+    LIVE truth is overlaid from the running mesh: which agents are actually registered,
+    each agent's registry status, and real A2A traffic (hop counts on edges + a recent
+    activity feed). Pass a Fleet for live data; omit it for the reference structure."""
+    base = _reference_topology()
+    if fleet is None:
+        return {**base, "live": False}
+
+    registered = {card.name for card in fleet.mesh.cards()}
+    status_by = {rec.name: rec.status for rec in fleet.registry.list()}
+    for node in base["nodes"]:
+        node["live"] = node["id"] in registered or node["id"] in status_by
+        node["status"] = status_by.get(node["id"])
+
+    counts: dict[tuple[str, str], int] = {}
+    for hop in fleet.hops:
+        key = (hop.from_agent, hop.to_agent)
+        counts[key] = counts.get(key, 0) + 1
+    for edge in base["edges"]:
+        c = counts.get((edge["source"], edge["target"]), 0)
+        edge["hops"] = c
+        edge["active"] = c > 0
+
+    recent = [{"from_agent": h.from_agent, "to_agent": h.to_agent,
+               "skill_id": h.skill_id, "ok": h.ok} for h in fleet.hops[-12:]]
+    return {**base, "live": True, "agents_registered": len(registered),
+            "total_hops": len(fleet.hops), "recent_hops": recent}
 
 
 Handler = Callable[[RunContext, dict[str, Any]], dict[str, Any]]

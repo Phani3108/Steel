@@ -10,6 +10,7 @@ from jai_gateway.client import (
 )
 from jai_gateway.keys import GatewayKeyError, provision_virtual_key
 from jai_gateway.models import GatewayResponse
+from jai_gateway.pricing import estimate_tokens, modeled_cost
 
 __version__ = "0.1.0"
 
@@ -20,5 +21,7 @@ __all__ = [
     "GatewayError",
     "GatewayKeyError",
     "GatewayResponse",
+    "estimate_tokens",
+    "modeled_cost",
     "provision_virtual_key",
 ]

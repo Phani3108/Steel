@@ -139,6 +139,37 @@ export function MissionOutcome({ state }: MissionOutcomeProps) {
           </Pill>
         </div>
       </div>
+
+      {/* next-step links — this is where the journey continues */}
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3">
+        <Link
+          href={`/runs/${encodeURIComponent(result.run_id)}`}
+          className="focus-ring inline-flex items-center gap-2 rounded-md border px-3.5 py-2 text-[13px] font-semibold transition-colors"
+          style={{
+            borderColor: withAlpha(COLORS.accent, 0.5),
+            color: COLORS.accent,
+            background: withAlpha(COLORS.accent, 0.1),
+          }}
+        >
+          <TrailGlyph />
+          View full audit trail
+          <Arrow />
+        </Link>
+        {paused && (
+          <Link
+            href="/approvals"
+            className="focus-ring inline-flex items-center gap-2 rounded-md border px-3.5 py-2 text-[13px] font-medium transition-colors"
+            style={{
+              borderColor: withAlpha(COLORS.warn, 0.5),
+              color: COLORS.warn,
+              background: withAlpha(COLORS.warn, 0.1),
+            }}
+          >
+            Awaiting approval at {result.paused_gate}
+            <Arrow />
+          </Link>
+        )}
+      </div>
     </motion.div>
   );
 }
@@ -214,6 +245,19 @@ function Arrow() {
         strokeWidth="1.4"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function TrailGlyph() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M3 4h10M3 8h10M3 12h6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );

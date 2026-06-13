@@ -6,8 +6,8 @@
  * Pure functions only; the page handles fetching/polling and passes results in.
  */
 
-import type { AgentRecord } from "@/lib/api";
-import type { FleetPart, NetworkNode } from "@/lib/fleet";
+import type { AgentRecord, NetworkNode, RunSummary } from "@/lib/api";
+import type { FleetPart } from "@/lib/fleet";
 import { REFERENCE_PARTS } from "@/lib/fleet";
 
 export interface NodeView extends NetworkNode {
@@ -15,6 +15,8 @@ export interface NodeView extends NetworkNode {
   record: AgentRecord | null;
   /** Human-readable purpose (from registry description or the fleet catalog). */
   description: string;
+  /** Recent runs this agent appears in — deep-links into /runs/{id}. */
+  runs: RunSummary[];
 }
 
 /** Index the reference catalog by part name for O(1) purpose lookup. */
@@ -29,10 +31,12 @@ const FALLBACK_PURPOSE: Record<string, string> = {
 /**
  * Build a `NodeView` for one topology node, preferring live registry data and
  * falling back to the built-in fleet catalog so the inspector is never empty.
+ * `runsByAgent` joins in the recent runs this node took part in (for deep-links).
  */
 export function resolveNode(
   node: NetworkNode,
   registry: Map<string, AgentRecord>,
+  runsByAgent?: Map<string, RunSummary[]>,
 ): NodeView {
   const record = registry.get(node.id) ?? null;
   const part = PART_BY_NAME.get(node.id);
@@ -42,7 +46,31 @@ export function resolveNode(
     FALLBACK_PURPOSE[node.id] ??
     `${node.label} — part of the ${node.system} system.`;
 
-  return { ...node, record, description };
+  return {
+    ...node,
+    record,
+    description,
+    runs: runsByAgent?.get(node.id) ?? [],
+  };
+}
+
+/**
+ * Group the live runs feed by the agent that owns each run, newest first, so the
+ * inspector can show "recent runs" with clickable /runs/{id} deep-links. Best-
+ * effort: runs without an agent field are skipped (the ambient mesh still shows).
+ */
+export function indexRunsByAgent(
+  runs: RunSummary[],
+): Map<string, RunSummary[]> {
+  const map = new Map<string, RunSummary[]>();
+  for (const r of runs) {
+    const agent = (r.agent as string | null | undefined) ?? null;
+    if (!agent || !r.run_id) continue;
+    const list = map.get(agent) ?? [];
+    list.push(r);
+    map.set(agent, list);
+  }
+  return map;
 }
 
 /** Turn an AgentRecord[] into a name→record map for quick joins. */

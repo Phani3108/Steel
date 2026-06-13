@@ -3,93 +3,82 @@
 import { AnimatePresence, motion } from "motion/react";
 
 import { LiveDot } from "@/components/ui";
-import type { RunSummary } from "@/lib/api";
-import { fmtTs } from "@/lib/api";
-import { COLORS, outcomeColor } from "@/lib/theme";
+import type { RecentHop } from "@/lib/api";
+import { COLORS } from "@/lib/theme";
 
 interface HopsTickerProps {
-  runs: RunSummary[];
-  /** True when /runs is unreachable — the ticker hides itself quietly. */
-  offline: boolean;
+  /** The live A2A activity feed from GET /network.recent_hops (newest first). */
+  hops: RecentHop[];
+  /** True when the mesh is reporting live traffic (drives the live dot). */
+  live: boolean;
 }
 
 /**
- * A quiet live ticker of recent fleet activity. Reads GET /runs and shows the
- * most recent runs (agent → outcome → when). Entirely optional and graceful:
- * if /runs is empty or offline it renders nothing rather than an error.
+ * The live A2A activity ticker. Reads GET /network.recent_hops and shows the
+ * most-recent agent-to-agent handoffs as "orchestrator → risk-sentinel ·
+ * risk.assess ✓". Entirely graceful: with no hops it renders a quiet idle note
+ * rather than an error, so the mesh always reads as instrumented.
  */
-export function HopsTicker({ runs, offline }: HopsTickerProps) {
-  const recent = runs
-    .filter((r) => r.run_id)
-    .slice(0, 8);
-
-  if (offline || recent.length === 0) return null;
+export function HopsTicker({ hops, live }: HopsTickerProps) {
+  const recent = hops
+    .filter((h) => h.from_agent && h.to_agent)
+    .slice(0, 10);
 
   return (
     <div className="flex items-center gap-3 px-4 py-2.5">
       <span className="inline-flex shrink-0 items-center gap-1.5">
-        <LiveDot live size={6} />
-        <span className="label-cap">live hops</span>
+        <LiveDot live={live && recent.length > 0} size={6} />
+        <span className="label-cap">a2a activity</span>
       </span>
-      <div className="relative min-w-0 flex-1 overflow-hidden">
-        <div className="flex gap-2.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <AnimatePresence initial={false}>
-            {recent.map((r) => (
-              <motion.span
-                key={r.run_id}
-                layout
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line bg-panel-2 px-2 py-1 font-mono text-[10px]"
-              >
-                <span
-                  className="inline-block h-1.5 w-1.5 rounded-full"
-                  style={{ background: outcomeFor(r), boxShadow: `0 0 5px -1px ${outcomeFor(r)}` }}
-                  aria-hidden
-                />
-                <span className="text-ink-muted">{agentOf(r)}</span>
-                {eventsOf(r) != null && (
-                  <span className="text-ink-ghost">· {eventsOf(r)} ev</span>
-                )}
-                <span className="text-ink-ghost">· {whenOf(r)}</span>
-              </motion.span>
-            ))}
-          </AnimatePresence>
+
+      {recent.length === 0 ? (
+        <span className="font-mono text-[10px] text-ink-ghost">
+          no hops yet — run a procurement to light up the mesh
+        </span>
+      ) : (
+        <div className="relative min-w-0 flex-1 overflow-hidden">
+          <div className="flex gap-2.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <AnimatePresence initial={false}>
+              {recent.map((h, i) => (
+                <motion.span
+                  key={`${h.from_agent}->${h.to_agent}:${h.skill_id}:${i}`}
+                  layout
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-line bg-panel-2 px-2 py-1 font-mono text-[10px]"
+                >
+                  <span className="text-ink-muted">{shortName(h.from_agent)}</span>
+                  <span className="text-ink-ghost">→</span>
+                  <span className="text-ink-muted">{shortName(h.to_agent)}</span>
+                  <span className="text-ink-ghost">·</span>
+                  <span className="text-ink-faint">{h.skill_id}</span>
+                  <span
+                    aria-hidden
+                    style={{ color: h.ok ? COLORS.ok : COLORS.danger }}
+                  >
+                    {h.ok ? "✓" : "✕"}
+                  </span>
+                </motion.span>
+              ))}
+            </AnimatePresence>
+          </div>
+          {/* edge fade so the row dissolves rather than hard-clipping */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 w-10"
+            style={{
+              background: `linear-gradient(to right, transparent, ${COLORS.panel})`,
+            }}
+          />
         </div>
-        {/* edge fade so the row dissolves rather than hard-clipping */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-10"
-          style={{
-            background: `linear-gradient(to right, transparent, ${COLORS.panel})`,
-          }}
-        />
-      </div>
+      )}
     </div>
   );
 }
 
-function agentOf(r: RunSummary): string {
-  const a = (r.agent as string | null | undefined) ?? null;
-  if (a) return a;
-  return String(r.run_id).slice(0, 12);
-}
-
-function outcomeFor(r: RunSummary): string {
-  const o = r["outcome"];
-  return typeof o === "string" ? outcomeColor(o) : COLORS.inkFaint;
-}
-
-function eventsOf(r: RunSummary): number | null {
-  const e = (r["events"] ?? r["event_count"]) as unknown;
-  return typeof e === "number" ? e : null;
-}
-
-function whenOf(r: RunSummary): string {
-  const ts = (r["last_ts"] ?? r["first_ts"] ?? r["started_at"]) as
-    | string
-    | undefined;
-  return fmtTs(ts);
+/** Trim the conventional "agent-" prefix so the ticker stays compact. */
+function shortName(id: string): string {
+  return id.startsWith("agent-") ? id.slice(6) : id;
 }

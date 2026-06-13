@@ -89,7 +89,7 @@ Anti-agent-washing is the thesis: no agent ships without a scorecard.
 
 | What | Result |
 |---|---|
-| Unit tests across every part | **184 passing** |
+| Unit tests across every part | **186 passing** |
 | Eval suite 1 — supplier intel (goldens + permission + injection) | **80 / 80** |
 | Eval suite 2 — autonomous sourcing scenarios | **12 / 12** |
 | Eval suite 3 — orchestration (routing, handoff, permission) | **12 / 12** |
@@ -103,11 +103,28 @@ the LangGraph runtime and a ~120-line plain-Python runtime and passes the identi
 
 ## The cockpit
 
-`make console` opens a nine-screen mission-control UI: an exploded-vehicle parts catalog,
-a live A2A fleet graph, a mission launcher (watch an orchestration fan out), a negotiation
-theatre (watch the negotiator hold its mandate line), telemetry diagnostics, a
-flight-recorder audit trail, an agent studio (form → schema-valid manifest), and a
-governance view (the eval-gated maturity ladder + an EU AI Act Art. 50 disclosure).
+`make console` opens a mission-control UI built around the **procurement journey** —
+Intake → Orchestrate → Approve → Award → Audit. The Home screen orients you in one glance
+and **"Run a sample procurement"** launches the whole thing in one click, dropping you on a
+unified **run-detail** view: the audit timeline, the modeled cost per agent, the approvals,
+and a **run replay** that animates that run's actual A2A hops across the fleet. Every
+`run_id` is a link, so you can follow one procurement end to end. Around it: a live A2A
+fleet graph (edges light up with real traffic), a mission launcher, a negotiation theatre
+(watch the negotiator hold its mandate line), telemetry diagnostics, a flight-recorder
+audit trail, an agent studio (form → schema-valid manifest), and a governance view
+(eval-gated maturity ladder + an EU AI Act Art. 50 disclosure).
+
+### Honest data, by design
+
+Everything the console shows is real or transparently modeled — nothing fake reads as
+live. With `JAI_MOCK=1` (the keyless default) no provider is billed, so **cost is *modeled***
+— real per-model token rates applied to the real token counts every call meters — and
+labelled "modeled cost · no API spend". Offline/fallback data is badged "reference". The
+fleet graph reflects the **live** mesh and real hop activity, not a static blueprint.
+Honest scope to note: the specialist agents currently run as mesh handlers (their manifest
+`pipeline` is metadata, not yet compiled through the engine), agent status is read-only in
+the UI, and the eval suites measure retrieval/routing/policy correctness rather than LLM
+reasoning (by design — they run keyless).
 
 ## Why this exists
 

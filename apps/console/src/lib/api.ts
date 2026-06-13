@@ -63,6 +63,19 @@ async function getJSON<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
+/** POST a JSON body and parse the JSON reply. Throws on network/HTTP failure. */
+async function postJSON<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`POST ${path} -> HTTP ${res.status}`);
+  }
+  return (await res.json()) as T;
+}
+
 /** The control plane may return a bare list or wrap it ({items: [...]}) — accept both. */
 function asList<T>(data: unknown, ...wrapperKeys: string[]): T[] {
   if (Array.isArray(data)) return data as T[];
@@ -194,24 +207,54 @@ export async function fetchRegistry(): Promise<AgentRecord[]> {
   return asList<AgentRecord>(await getJSON("/registry"), "registry", "agents");
 }
 
-/** A node in the fleet graph (GET /network). */
+/**
+ * A node in the fleet graph (GET /network). NOW LIVE — `live`/`status` reflect the
+ * control-plane registry, so a node can be dark even when the topology resolves.
+ */
 export interface NetworkNode {
   id: string;
   label: string;
   system: AgentRecord["system"];
   role: "human" | "agent" | "service";
+  /** True when the node's agent/service is reporting in. */
+  live?: boolean;
+  /** Lifecycle status string (active/paused/…) or null when unknown. */
+  status?: string | null;
 }
 
-/** A directed edge in the fleet graph. */
+/**
+ * A directed edge in the fleet graph. Edges now carry REAL hop counts: `hops` is
+ * how many times this A2A handoff has actually fired, `active` lights it up.
+ */
 export interface NetworkEdge {
   source: string;
   target: string;
   label?: string;
+  /** Number of real A2A hops observed across this edge. */
+  hops?: number;
+  /** True when this handoff has fired recently. */
+  active?: boolean;
+}
+
+/** One entry in the live A2A activity feed (GET /network.recent_hops). */
+export interface RecentHop {
+  from_agent: string;
+  to_agent: string;
+  skill_id: string;
+  ok: boolean;
 }
 
 export interface NetworkTopology {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
+  /** True when the mesh is reporting live A2A traffic. */
+  live: boolean;
+  /** How many agents are registered in the control plane. */
+  agents_registered: number;
+  /** Total A2A hops observed across the whole mesh. */
+  total_hops: number;
+  /** Most-recent A2A handoffs, newest first — a live activity feed. */
+  recent_hops: RecentHop[];
 }
 
 export async function fetchNetwork(): Promise<NetworkTopology> {
@@ -219,6 +262,11 @@ export async function fetchNetwork(): Promise<NetworkTopology> {
   return {
     nodes: Array.isArray(data?.nodes) ? data.nodes : [],
     edges: Array.isArray(data?.edges) ? data.edges : [],
+    live: Boolean(data?.live),
+    agents_registered:
+      typeof data?.agents_registered === "number" ? data.agents_registered : 0,
+    total_hops: typeof data?.total_hops === "number" ? data.total_hops : 0,
+    recent_hops: Array.isArray(data?.recent_hops) ? data.recent_hops : [],
   };
 }
 
@@ -232,13 +280,15 @@ export interface OrchestrateHop {
   summary: string;
 }
 
-/** Request body for POST /orchestrate. */
+/** Request body for POST /orchestrate. Only `title` is required by the API. */
 export interface OrchestrateBody {
   title: string;
-  category: string;
-  est_value_usd: number;
-  tenant_id: string;
-  role: string;
+  category?: string;
+  est_value_usd?: number;
+  tenant_id?: string;
+  role?: string;
+  /** Skip the human gate and auto-approve over-mandate awards (demo path). */
+  auto_approve?: boolean;
 }
 
 /** Result of POST /orchestrate. */
@@ -247,23 +297,33 @@ export interface OrchestrateResult {
   trace_id: string;
   status: string;
   hops: OrchestrateHop[];
+  /** Memo lines composed by the orchestrator (optional). */
+  memos?: string[];
   event_id?: string;
   award: { supplier_id: string; total_usd: number } | null;
   paused_gate: string | null;
+  /** Total modeled cost of the run (no real API spend). */
+  total_cost_usd?: number;
 }
 
 export async function postOrchestrate(
   body: OrchestrateBody,
 ): Promise<OrchestrateResult> {
-  const res = await fetch(`${API_BASE}/orchestrate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+  return postJSON<OrchestrateResult>("/orchestrate", body);
+}
+
+/**
+ * One-click demo: launch a sensible sample procurement end-to-end. Used by Home's
+ * "▶ Run a sample procurement" button — the caller routes to /runs/{run_id} on the
+ * returned result so a newcomer sees the whole journey work in a single click.
+ */
+export async function startSampleProcurement(): Promise<OrchestrateResult> {
+  return postOrchestrate({
+    title: "Sample: Line-2 PPE refresh",
+    est_value_usd: 120_000,
+    role: "cpo",
+    auto_approve: true,
   });
-  if (!res.ok) {
-    throw new Error(`POST /orchestrate -> HTTP ${res.status}`);
-  }
-  return (await res.json()) as OrchestrateResult;
 }
 
 // ====================================================================
@@ -373,4 +433,78 @@ export async function postManifestValidate(yaml: string): Promise<ManifestCheck>
     throw new Error(`POST /manifest/validate -> HTTP ${res.status}`);
   }
   return (await res.json()) as ManifestCheck;
+}
+
+// ====================================================================
+// Run detail — the deep-linkable single-run view (GET /runs/{id}/detail).
+// The whole story of one procurement: summary, hash-chained events, modeled
+// per-agent cost, and the approval gates it passed through. Throws on failure;
+// the page renders a graceful "run not found / offline" state.
+// ====================================================================
+
+/** Rolled-up summary of a single run (GET /runs/{id}/detail.summary). */
+export interface RunDetailSummary {
+  first_ts: string | null;
+  last_ts: string | null;
+  tenant_id: string | null;
+  events: number;
+  outcome: string | null;
+  agents: string[];
+}
+
+/** One modeled per-agent cost line for a run. */
+export interface RunCostRow {
+  agent: string;
+  calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cost_usd: number;
+}
+
+/** One approval gate this run passed through. */
+export interface RunApproval {
+  id: number;
+  gate: string;
+  status: string;
+  agent: string | null;
+  thread_id: string | null;
+  requested_by: string | null;
+  decided_by: string | null;
+  payload: Record<string, unknown> | null;
+  ts: string | null;
+  decided_at: string | null;
+}
+
+/** Full single-run detail (GET /runs/{id}/detail). */
+export interface RunDetail {
+  run_id: string;
+  found: boolean;
+  summary: RunDetailSummary;
+  events: AuditEvent[];
+  costs: RunCostRow[];
+  cost_total_usd: number;
+  approvals: RunApproval[];
+}
+
+export async function fetchRunDetail(runId: string): Promise<RunDetail> {
+  const data = await getJSON<Partial<RunDetail>>(
+    `/runs/${encodeURIComponent(runId)}/detail`,
+  );
+  return {
+    run_id: data?.run_id ?? runId,
+    found: Boolean(data?.found),
+    summary: {
+      first_ts: data?.summary?.first_ts ?? null,
+      last_ts: data?.summary?.last_ts ?? null,
+      tenant_id: data?.summary?.tenant_id ?? null,
+      events: data?.summary?.events ?? 0,
+      outcome: data?.summary?.outcome ?? null,
+      agents: Array.isArray(data?.summary?.agents) ? data.summary.agents : [],
+    },
+    events: Array.isArray(data?.events) ? data.events : [],
+    costs: Array.isArray(data?.costs) ? data.costs : [],
+    cost_total_usd:
+      typeof data?.cost_total_usd === "number" ? data.cost_total_usd : 0,
+    approvals: Array.isArray(data?.approvals) ? data.approvals : [],
+  };
 }

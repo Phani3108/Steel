@@ -12,7 +12,7 @@
  * Everything here is pure: given the same nodes/edges it returns the same map.
  */
 
-import type { NetworkEdge, NetworkNode } from "@/lib/fleet";
+import type { NetworkEdge, NetworkNode } from "@/lib/api";
 
 export interface LaidOutNode extends NetworkNode {
   x: number;

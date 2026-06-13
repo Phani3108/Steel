@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
-import { SectionHeader } from "@/components/ui";
+import { SectionHeader, Term } from "@/components/ui";
 import { COLORS } from "@/lib/theme";
 import { fetchMeta, postChat, type Meta } from "@/lib/api";
 
@@ -130,6 +130,16 @@ export default function ChatPage() {
         onTenant={setTenant}
       />
 
+      {/* permission-scope note — answers obey the persona's mandate, below the model */}
+      <p className="flex flex-wrap items-center gap-1.5 px-1 text-[11.5px] leading-relaxed text-ink-faint">
+        <ShieldGlyph />
+        Answers are{" "}
+        <span className="text-ink-muted">permission-scoped</span> to this
+        persona&rsquo;s <Term k="mandate" /> — the{" "}
+        <Term k="autonomy">governor</Term> enforces row- and field-level access
+        below the model, and every answer is traced to the audit log.
+      </p>
+
       {/* conversation surface */}
       <div className="panel relative flex min-h-[clamp(22rem,52vh,40rem)] flex-col overflow-hidden">
         <div
@@ -195,5 +205,36 @@ function ExamplePromptsRow({
       <span className="label-cap shrink-0">more as {roleLabel(role)}</span>
       <ExamplePrompts role={role} onPick={onPick} compact />
     </div>
+  );
+}
+
+/**
+ * A small shield — the visual anchor for the permission-scope note, signalling
+ * that the governor enforces access below the model. Tinted with the autonomy hue
+ * to tie it to the governor / mandate vocabulary used in the line.
+ */
+function ShieldGlyph() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 16 16"
+      className="h-3.5 w-3.5 shrink-0"
+      fill="none"
+      style={{ color: COLORS.autonomy }}
+    >
+      <path
+        d="M8 1.5 13 3.4v4.1c0 3.2-2.1 5.6-5 6.9-2.9-1.3-5-3.7-5-6.9V3.4L8 1.5Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.8 8 7.3 9.5 10.3 6"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

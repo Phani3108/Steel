@@ -1,15 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 
-import { EmptyState, SectionHeader } from "@/components/ui";
+import { EmptyState, Panel, SectionHeader, Spinner } from "@/components/ui";
+import { JourneyBar } from "@/components/JourneyBar";
 import { COLORS, withAlpha } from "@/lib/theme";
-import { API_BASE } from "@/lib/api";
+import { API_BASE, startSampleProcurement } from "@/lib/api";
 import { usePoll } from "@/lib/usePoll";
 
 import { GateCard } from "./_components/GateCard";
 import { fmtUsdFull, moneyAtStake, type Approval } from "./_components/types";
+
+/** A resolved gate, kept on screen as a confirmation that links to its run. */
+interface Confirmation {
+  id: number;
+  approve: boolean;
+  runId: string;
+  gate: string;
+}
 
 async function fetchApprovals(): Promise<Approval[]> {
   const res = await fetch(`${API_BASE}/approvals`, { cache: "no-store" });
@@ -31,6 +41,7 @@ async function fetchApprovals(): Promise<Approval[]> {
  */
 export default function ApprovalsPage() {
   const [decided, setDecided] = useState<number[]>([]);
+  const [confirmations, setConfirmations] = useState<Confirmation[]>([]);
   const [now, setNow] = useState(() => Date.now());
   const { data, offline, loaded } = usePoll<Approval[]>(fetchApprovals, 3000);
 
@@ -42,6 +53,8 @@ export default function ApprovalsPage() {
 
   const decide = useCallback(
     async (id: number, approve: boolean): Promise<void> => {
+      // Snapshot the run we're resolving so the confirmation can deep-link to it.
+      const row = (data ?? []).find((a) => a.id === id);
       try {
         await fetch(`${API_BASE}/approvals/${id}/decide`, {
           method: "POST",
@@ -55,10 +68,20 @@ export default function ApprovalsPage() {
       } finally {
         // Optimistic: drop it now; the next poll confirms it's gone server-side.
         setDecided((d) => (d.includes(id) ? d : [...d, id]));
+        if (row?.run_id) {
+          setConfirmations((c) => [
+            { id, approve, runId: row.run_id, gate: row.gate },
+            ...c.filter((x) => x.id !== id),
+          ]);
+        }
       }
     },
-    [],
+    [data],
   );
+
+  const dismissConfirmation = useCallback((id: number) => {
+    setConfirmations((c) => c.filter((x) => x.id !== id));
+  }, []);
 
   // Hide anything we've optimistically decided. The `decided` set only ever needs
   // ids the server is *still* returning (those are the in-flight removals); once a
@@ -99,6 +122,21 @@ export default function ApprovalsPage() {
         }
       />
 
+      <Panel accent="accent" title="procurement journey · you are here">
+        <JourneyBar current="approve" size="sm" linked />
+      </Panel>
+
+      {/* confirmations — a decided gate stays visible just long enough to trace it */}
+      <AnimatePresence initial={false}>
+        {confirmations.map((c) => (
+          <ConfirmationStrip
+            key={c.id}
+            confirmation={c}
+            onDismiss={() => dismissConfirmation(c.id)}
+          />
+        ))}
+      </AnimatePresence>
+
       {!loaded ? (
         <div className="panel telem-grid">
           <SkeletonStack />
@@ -110,14 +148,12 @@ export default function ApprovalsPage() {
             title="No runs are waiting on you"
             hint={
               <>
-                When an agent hits a publish or over-mandate award gate it parks
-                here. Run{" "}
-                <code className="metric rounded bg-panel-2 px-1.5 py-0.5 text-ink-muted">
-                  make demo-p2
-                </code>{" "}
-                to send a sourcing run into a gate and watch it land.
+                Approvals appear here when an agent run pauses for a human
+                decision — an over-mandate award or an RFx publish. Your verdict
+                is what resumes the parked run.
               </>
             }
+            action={<SampleProcurementButton />}
           />
         </div>
       ) : (
@@ -175,6 +211,163 @@ function CountBadge({ count, totalUsd }: { count: number; totalUsd: number }) {
         <span className="label-cap">{count === 1 ? "gate" : "gates"}</span>
       </span>
     </div>
+  );
+}
+
+/**
+ * A decided gate, surfaced as a confirmation that the parked run resumed — with a
+ * deep-link to its full audit trail so the operator can follow it onward.
+ */
+function ConfirmationStrip({
+  confirmation: c,
+  onDismiss,
+}: {
+  confirmation: Confirmation;
+  onDismiss: () => void;
+}) {
+  const color = c.approve ? COLORS.ok : COLORS.danger;
+  const verb = c.approve ? "approved" : "rejected";
+  const outcome = c.approve
+    ? "run resumed"
+    : "run stays halted";
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border px-4 py-2.5"
+      style={{
+        borderColor: withAlpha(color, 0.4),
+        background: withAlpha(color, 0.08),
+      }}
+    >
+      <span
+        className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+        style={{ background: withAlpha(color, 0.18), color }}
+        aria-hidden
+      >
+        {c.approve ? (
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M3.5 8.5 6.5 11.5l6-7"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M4 4l8 8M12 4l-8 8"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </svg>
+        )}
+      </span>
+      <span className="text-[13px] text-ink">
+        <span className="font-semibold" style={{ color }}>
+          {verb}
+        </span>{" "}
+        — {outcome} at the{" "}
+        <span className="metric text-ink-muted">{c.gate}</span> gate.
+      </span>
+      <Link
+        href={`/runs/${encodeURIComponent(c.runId)}`}
+        className="focus-ring metric ml-auto rounded text-[12px] text-accent underline-offset-2 transition-colors hover:underline"
+      >
+        View run detail →
+      </Link>
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label="dismiss"
+        className="focus-ring rounded p-1 text-ink-faint transition-colors hover:text-ink"
+      >
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" aria-hidden>
+          <path
+            d="M4 4l8 8M12 4l-8 8"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </button>
+    </motion.div>
+  );
+}
+
+/**
+ * One-click "produce a gate to act on" — launches a sample procurement; an
+ * over-mandate run lands a fresh approval in this very inbox (next poll picks it
+ * up). On failure it just falls quiet — this is a convenience, not a load-bearing
+ * path.
+ */
+function SampleProcurementButton() {
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+
+  async function run() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await startSampleProcurement();
+      setDone(true);
+    } catch {
+      /* offline — nothing to surface; the empty state stays as-is */
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (done) {
+    return (
+      <p className="metric text-[12px] text-ok">
+        sample launched — watch for a gate to appear above ↑
+      </p>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={run}
+      disabled={busy}
+      className="focus-ring inline-flex items-center gap-2 rounded-md border px-3.5 py-2 text-[13px] font-medium transition-colors disabled:opacity-50"
+      style={{
+        borderColor: withAlpha(COLORS.accent, 0.5),
+        color: COLORS.accent,
+        background: withAlpha(COLORS.accent, 0.1),
+      }}
+    >
+      {busy ? (
+        <Spinner size={14} label="launching…" />
+      ) : (
+        <>
+          <PlayGlyph />
+          Run a sample procurement
+        </>
+      )}
+    </button>
+  );
+}
+
+function PlayGlyph() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M5 3.5v9l7-4.5-7-4.5Z"
+        fill="currentColor"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 

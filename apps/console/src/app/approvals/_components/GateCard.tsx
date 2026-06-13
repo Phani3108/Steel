@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 
 import { Pill, SystemBadge } from "@/components/ui";
@@ -161,11 +162,14 @@ export function GateCard({ approval: a, onDecide, index, now }: GateCardProps) {
               </div>
               <div className="mt-1.5 flex items-baseline gap-2">
                 <dt className="label-cap w-12">run</dt>
-                <dd
-                  className="metric max-w-[12rem] truncate text-ink-muted"
-                  title={a.run_id}
-                >
-                  {a.run_id}
+                <dd className="min-w-0">
+                  <Link
+                    href={`/runs/${encodeURIComponent(a.run_id)}`}
+                    title={`See this run — ${a.run_id}`}
+                    className="focus-ring metric block max-w-[12rem] truncate rounded text-ink-muted underline-offset-2 transition-colors hover:text-accent hover:underline"
+                  >
+                    {a.run_id} <span aria-hidden>↗</span>
+                  </Link>
                 </dd>
               </div>
             </dl>

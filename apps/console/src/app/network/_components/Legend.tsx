@@ -29,7 +29,41 @@ export function Legend() {
       <RoleGlyph kind="human" label="operator" />
       <RoleGlyph kind="agent" label="agent" />
       <RoleGlyph kind="service" label="service / mcp" />
+
+      <span className="mx-1 hidden h-3 w-px bg-line lg:inline-block" aria-hidden />
+
+      <span className="label-cap">edges</span>
+      <EdgeGlyph kind="active" label="carried a2a traffic" />
+      <EdgeGlyph kind="idle" label="never fired" />
     </div>
+  );
+}
+
+function EdgeGlyph({
+  kind,
+  label,
+}: {
+  kind: "active" | "idle";
+  label: string;
+}) {
+  const c = kind === "active" ? "var(--ink-muted)" : "var(--ink-ghost)";
+  return (
+    <span className="inline-flex items-center gap-1.5 text-ink-muted">
+      <svg width={20} height={6} viewBox="0 0 20 6" aria-hidden>
+        <line
+          x1={1}
+          y1={3}
+          x2={19}
+          y2={3}
+          stroke={c}
+          strokeWidth={kind === "active" ? 2 : 1.2}
+          strokeLinecap="round"
+          strokeDasharray={kind === "idle" ? "3 4" : undefined}
+        />
+        {kind === "active" && <circle cx={13} cy={3} r={2} fill={c} />}
+      </svg>
+      <span className="text-ink-ghost">{label}</span>
+    </span>
   );
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 
 import {
   AutonomyMeter,
@@ -9,7 +10,8 @@ import {
   GaugeRing,
   Pill,
 } from "@/components/ui";
-import type { AgentRecord } from "@/lib/api";
+import type { AgentRecord, RunSummary } from "@/lib/api";
+import { fmtTs } from "@/lib/api";
 import { AUTONOMY_LABELS, systemHue, withAlpha } from "@/lib/theme";
 
 import type { NodeView } from "./resolve";
@@ -118,6 +120,49 @@ function Detail({ node }: { node: NodeView }) {
           </p>
         </div>
       )}
+
+      {/* recent runs this node took part in — deep-links into /runs/{id} */}
+      <RecentRuns runs={node.runs} hue={hue} />
+    </div>
+  );
+}
+
+/**
+ * The runs this node appears in, newest first, each a deep-link to the single-
+ * run detail view — closing the audit's "you get a run_id you can't click" gap.
+ * Renders nothing if the live runs feed couldn't be joined onto this agent.
+ */
+function RecentRuns({ runs, hue }: { runs: RunSummary[]; hue: string }) {
+  if (runs.length === 0) return null;
+  const shown = runs.slice(0, 6);
+
+  return (
+    <div className="hairline pt-4">
+      <span className="label-cap">recent runs</span>
+      <ul className="mt-2 flex flex-col gap-1">
+        {shown.map((r) => (
+          <li key={r.run_id}>
+            <Link
+              href={`/runs/${encodeURIComponent(r.run_id)}`}
+              className="focus-ring group flex items-center justify-between gap-2 rounded-md border border-line bg-panel-2 px-2.5 py-1.5 transition-colors hover:border-line-strong"
+              style={{ borderColor: withAlpha(hue, 0.14) }}
+            >
+              <span className="metric min-w-0 flex-1 truncate text-[11px] text-ink-muted group-hover:text-ink">
+                {r.run_id}
+              </span>
+              <span className="metric shrink-0 text-[10px] text-ink-faint">
+                {fmtTs(r.last_ts ?? r.started_at)}
+              </span>
+              <span
+                aria-hidden
+                className="shrink-0 text-[11px] text-ink-ghost transition-colors group-hover:text-accent"
+              >
+                open →
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

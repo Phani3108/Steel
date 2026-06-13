@@ -66,22 +66,24 @@ function Citations({ citations }: { citations: ChatCitation[] }) {
 function AnswerFooter({ reply }: { reply: ChatReply }) {
   return (
     <div className="mt-2.5 flex items-center gap-2 text-[10px]">
-      <span className="metric text-ink-faint">
-        cost <span className="text-ink-muted">{fmtUsd(reply.cost_usd)}</span>
+      <span
+        className="metric text-ink-faint"
+        title="Modeled from real per-model rates × real token counts — no live API spend."
+      >
+        modeled cost{" "}
+        <span className="text-ink-muted">{fmtUsd(reply.cost_usd)}</span>
       </span>
       <span className="text-ink-ghost" aria-hidden>
         ·
       </span>
       <Link
-        href="/runs"
-        title={`Inspect the audit trail for ${reply.run_id}`}
-        className="focus-ring metric rounded text-ink-faint underline-offset-2 transition-colors hover:text-accent hover:underline"
+        href={`/runs/${encodeURIComponent(reply.run_id)}`}
+        title={`Inspect the full audit trail for ${reply.run_id}`}
+        className="focus-ring metric inline-flex items-center gap-1 rounded text-ink-faint underline-offset-2 transition-colors hover:text-accent hover:underline"
       >
         {reply.run_id}
+        <span className="tracking-wider text-ink-ghost">trace &rarr;</span>
       </Link>
-      <span className="ml-auto metric text-[9px] tracking-wider text-ink-ghost">
-        traced &rarr; audit
-      </span>
     </div>
   );
 }

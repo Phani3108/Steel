@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 
 import { Chip, Pill, SystemBadge } from "@/components/ui";
@@ -85,7 +86,13 @@ export function HopCard({ hop, index, isLast }: HopCardProps) {
             {String(index + 1).padStart(2, "0")}
           </span>
           <SystemBadge system={to.system} dotOnly />
-          <span className="text-sm font-medium text-ink">{to.label}</span>
+          <Link
+            href="/network"
+            title={`See ${to.label} in the live agent network`}
+            className="focus-ring rounded text-sm font-medium text-ink underline-offset-2 transition-colors hover:text-accent hover:underline"
+          >
+            {to.label}
+          </Link>
           <Chip color={hue} className="ml-0.5">
             {hop.skill_id}
           </Chip>

@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "motion/react";
 
-import { SectionHeader } from "@/components/ui";
+import { Panel, SectionHeader } from "@/components/ui";
+import { JourneyBar } from "@/components/JourneyBar";
 import { COLORS } from "@/lib/theme";
 import { MissionForm } from "./_components/MissionForm";
 import { MissionIdle } from "./_components/MissionIdle";
@@ -47,6 +48,10 @@ export default function OrchestratePage() {
           ) : null
         }
       />
+
+      <Panel accent="accent" title="procurement journey · you are here">
+        <JourneyBar current="orchestrate" size="sm" linked />
+      </Panel>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:items-start">
         {/* intake — sticky on wide screens so it stays in reach while the run scrolls */}

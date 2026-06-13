@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 
 import { Panel, SectionHeader } from "@/components/ui";
+import { JourneyBar } from "@/components/JourneyBar";
 import {
   fetchRunEvents,
   fetchRuns,
@@ -79,6 +80,12 @@ export default function RunsPage() {
           live telemetry offline — showing last known recorder state
         </p>
       )}
+
+      <div className="mt-6">
+        <Panel accent="accent" title="procurement journey · you are here">
+          <JourneyBar current="audit" size="sm" linked />
+        </Panel>
+      </div>
 
       <div className="mt-6 grid items-start gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         {/* runs index */}

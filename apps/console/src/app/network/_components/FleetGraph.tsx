@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { NetworkEdge, NetworkNode } from "@/lib/fleet";
+import type { NetworkEdge, NetworkNode } from "@/lib/api";
 import {
   COLORS,
   statusColor,
@@ -20,8 +20,10 @@ interface FleetGraphProps {
   selected: string | null;
   /** Status by node id (active/paused/…); defaults to active. */
   statusOf?: (id: string) => Status;
-  /** Edges that are "hot" right now (recent A2A traffic) — pulse brighter. */
-  hotEdges?: Set<string>;
+  /** Whether a node is reporting live (drives its rim brightness). */
+  liveOf?: (id: string) => boolean;
+  /** Edge ids that just fired from a sample run — flash bright for a beat. */
+  firedEdges?: Set<string>;
   onSelect: (id: string) => void;
 }
 
@@ -29,17 +31,20 @@ interface FleetGraphProps {
  * The fleet network graph — a hand-rolled SVG node-link diagram.
  *
  * Layout is deterministic (layered left→right). Edges are bezier "cables"
- * tinted by their source system; a small data packet rides each edge via
- * SVG <animateMotion> to convey live agent-to-agent traffic. Nodes are drawn
- * as system-hued glyphs whose shape encodes role (diamond=human, circle=agent,
- * square=service) and whose ring encodes lifecycle status. Click to inspect.
+ * tinted by their source system. An edge that has carried REAL A2A traffic
+ * (`active`, with a `hops` count) renders bright + thicker, runs a fast data
+ * packet, and shows a hop-count badge; an edge that has never fired stays dim
+ * and quiet. Nodes are drawn as system-hued glyphs whose shape encodes role
+ * (diamond=human, circle=agent, square=service); a dark/idle node (not live)
+ * reads muted, an active one reads lit. Click to inspect.
  */
 export function FleetGraph({
   nodes,
   edges,
   selected,
   statusOf,
-  hotEdges,
+  liveOf,
+  firedEdges,
   onSelect,
 }: FleetGraphProps) {
   const layout = useMemo(() => computeLayout(nodes, edges), [nodes, edges]);
@@ -85,12 +90,16 @@ export function FleetGraph({
             const hue = systemHue(
               nodes.find((n) => n.id === e.source)?.system ?? "NETWORK",
             );
-            const hot = hotEdges?.has(e.id) ?? false;
+            // An edge is "active" when the control plane reports real A2A traffic.
+            const active = Boolean(e.active) || (e.hops ?? 0) > 0;
+            const fired = firedEdges?.has(e.id) ?? false;
             const involved =
               selected === null ||
               e.source === selected ||
               e.target === selected;
-            const op = involved ? (hot ? 0.85 : 0.5) : 0.12;
+            // Base opacity: active edges read bright, idle edges stay faint.
+            const baseOp = active ? 0.78 : 0.16;
+            const op = involved ? (fired ? 1 : baseOp) : 0.1;
             const d = edgePath(e);
 
             return (
@@ -99,16 +108,28 @@ export function FleetGraph({
                   d={d}
                   fill="none"
                   stroke={withAlpha(hue, op)}
-                  strokeWidth={hot ? 2 : 1.4}
+                  strokeWidth={fired ? 2.6 : active ? 2 : 1.2}
                   strokeLinecap="round"
+                  strokeDasharray={active ? undefined : "3 4"}
                   style={{ transition: "stroke 0.4s, stroke-width 0.4s" }}
                 />
                 {/* edge label, set at the midpoint */}
                 {e.label && involved && (
-                  <EdgeLabel e={e} hue={hue} hot={hot} />
+                  <EdgeLabel e={e} hue={hue} active={active} />
                 )}
-                {/* the travelling data packet */}
-                <DataPacket edgeId={e.id} hue={hue} hot={hot} faded={!involved} />
+                {/* hop-count badge on edges that have carried real traffic */}
+                {active && involved && (e.hops ?? 0) > 0 && (
+                  <HopBadge e={e} hue={hue} hops={e.hops ?? 0} />
+                )}
+                {/* the travelling data packet — only on live/fired edges */}
+                {(active || fired) && (
+                  <DataPacket
+                    edgeId={e.id}
+                    hue={hue}
+                    fast={fired}
+                    faded={!involved}
+                  />
+                )}
               </g>
             );
           })}
@@ -121,6 +142,7 @@ export function FleetGraph({
               key={n.id}
               node={n}
               status={statusOf?.(n.id) ?? "active"}
+              live={liveOf?.(n.id) ?? true}
               selected={n.id === selected}
               dimmed={dim(n.id)}
               onSelect={onSelect}
@@ -137,26 +159,26 @@ export function FleetGraph({
 function DataPacket({
   edgeId,
   hue,
-  hot,
+  fast,
   faded,
 }: {
   edgeId: string;
   hue: string;
-  hot: boolean;
+  fast: boolean;
   faded: boolean;
 }) {
   // Deterministic per-edge phase so packets don't all fire in lockstep.
   const seed = useMemo(() => hashString(edgeId), [edgeId]);
-  const dur = hot ? 1.5 : 3.2 + (seed % 7) * 0.18;
+  const dur = fast ? 1.1 : 2.6 + (seed % 7) * 0.16;
   const begin = -((seed % 11) * 0.27);
 
   return (
     <circle
-      r={hot ? 3 : 2.2}
+      r={fast ? 3.4 : 2.4}
       fill={hue}
-      opacity={faded ? 0.18 : hot ? 1 : 0.85}
+      opacity={faded ? 0.18 : fast ? 1 : 0.9}
       style={{
-        filter: `drop-shadow(0 0 ${hot ? 5 : 3}px ${withAlpha(hue, 0.9)})`,
+        filter: `drop-shadow(0 0 ${fast ? 6 : 3.5}px ${withAlpha(hue, 0.9)})`,
         transition: "opacity 0.4s",
       }}
     >
@@ -178,11 +200,11 @@ function DataPacket({
 function EdgeLabel({
   e,
   hue,
-  hot,
+  active,
 }: {
   e: { x1: number; y1: number; x2: number; y2: number; label?: string };
   hue: string;
-  hot: boolean;
+  active: boolean;
 }) {
   const mx = (e.x1 + e.x2) / 2;
   const my = (e.y1 + e.y2) / 2 - 6;
@@ -193,7 +215,7 @@ function EdgeLabel({
       textAnchor="middle"
       className="metric"
       style={{
-        fill: hot ? hue : COLORS.inkFaint,
+        fill: active ? hue : COLORS.inkGhost,
         fontSize: 9,
         letterSpacing: "0.06em",
         pointerEvents: "none",
@@ -204,6 +226,45 @@ function EdgeLabel({
   );
 }
 
+/** A small "×N" hop-count badge pinned just below an active edge's midpoint. */
+function HopBadge({
+  e,
+  hue,
+  hops,
+}: {
+  e: { x1: number; y1: number; x2: number; y2: number };
+  hue: string;
+  hops: number;
+}) {
+  const mx = (e.x1 + e.x2) / 2;
+  const my = (e.y1 + e.y2) / 2 + 9;
+  const text = `${hops} hop${hops === 1 ? "" : "s"}`;
+  const w = text.length * 5.4 + 10;
+  return (
+    <g pointerEvents="none">
+      <rect
+        x={mx - w / 2}
+        y={my - 7}
+        width={w}
+        height={13}
+        rx={6.5}
+        fill={withAlpha(hue, 0.16)}
+        stroke={withAlpha(hue, 0.4)}
+        strokeWidth={0.75}
+      />
+      <text
+        x={mx}
+        y={my + 2.5}
+        textAnchor="middle"
+        className="metric"
+        style={{ fill: hue, fontSize: 8.5, letterSpacing: "0.04em" }}
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
 // ----------------------------------------------------------------- nodes ----
 
 const NODE_R = 22;
@@ -211,12 +272,14 @@ const NODE_R = 22;
 function NodeGlyph({
   node,
   status,
+  live,
   selected,
   dimmed,
   onSelect,
 }: {
   node: LaidOutNode;
   status: Status;
+  live: boolean;
   selected: boolean;
   dimmed: boolean;
   onSelect: (id: string) => void;
@@ -224,6 +287,8 @@ function NodeGlyph({
   const hue = systemHue(node.system);
   const ring = statusColor(status);
   const { x, y } = node;
+  // A node that isn't reporting live reads muted — its hue rim and status dot dim.
+  const rimAlpha = live ? (selected ? 0.95 : 0.7) : 0.28;
 
   return (
     <g
@@ -231,7 +296,7 @@ function NodeGlyph({
       onClick={() => onSelect(node.id)}
       role="button"
       tabIndex={0}
-      aria-label={`${node.label} — ${node.system} ${node.role}`}
+      aria-label={`${node.label} — ${node.system} ${node.role}${live ? "" : " (offline)"}`}
       aria-pressed={selected}
       onKeyDown={(ev) => {
         if (ev.key === "Enter" || ev.key === " ") {
@@ -241,7 +306,7 @@ function NodeGlyph({
       }}
       style={{
         cursor: "pointer",
-        opacity: dimmed ? 0.32 : 1,
+        opacity: dimmed ? 0.32 : live ? 1 : 0.72,
         transition: "opacity 0.35s",
         outline: "none",
       }}
@@ -262,20 +327,20 @@ function NodeGlyph({
       )}
 
       {/* body */}
-      <Shape role={node.role} r={NODE_R} fill={COLORS.panel} stroke={ring} strokeWidth={1.5} />
+      <Shape role={node.role} r={NODE_R} fill={COLORS.panel} stroke={live ? ring : COLORS.inkGhost} strokeWidth={1.5} />
       <Shape role={node.role} r={NODE_R} fill="url(#fg-node-core)" stroke="none" />
       {/* hue accent rim */}
       <Shape
         role={node.role}
         r={NODE_R}
         fill="none"
-        stroke={withAlpha(hue, selected ? 0.95 : 0.7)}
+        stroke={withAlpha(hue, rimAlpha)}
         strokeWidth={selected ? 2 : 1.5}
         extra={{ style: { transition: "stroke 0.3s, stroke-width 0.3s" } }}
       />
 
       {/* role glyph in the center */}
-      <CenterGlyph role={node.role} hue={hue} />
+      <CenterGlyph role={node.role} hue={live ? hue : COLORS.inkFaint} />
 
       {/* label below */}
       <text
@@ -283,7 +348,7 @@ function NodeGlyph({
         textAnchor="middle"
         className="metric"
         style={{
-          fill: selected ? COLORS.ink : COLORS.inkMuted,
+          fill: selected ? COLORS.ink : live ? COLORS.inkMuted : COLORS.inkFaint,
           fontSize: 11,
           fontWeight: selected ? 600 : 500,
           transition: "fill 0.3s",
@@ -292,16 +357,27 @@ function NodeGlyph({
       >
         {node.label}
       </text>
-      {/* status dot tucked at the node's shoulder */}
+      {/* status dot tucked at the node's shoulder — pulses when live */}
       <circle
         cx={NODE_R * 0.62}
         cy={-NODE_R * 0.62}
         r={3}
-        fill={ring}
+        fill={live ? ring : COLORS.inkGhost}
         stroke={COLORS.base}
         strokeWidth={1}
-        style={{ filter: `drop-shadow(0 0 4px ${withAlpha(ring, 0.8)})` }}
-      />
+        style={{
+          filter: live ? `drop-shadow(0 0 4px ${withAlpha(ring, 0.8)})` : "none",
+        }}
+      >
+        {live && (
+          <animate
+            attributeName="opacity"
+            values="1;0.45;1"
+            dur="2.4s"
+            repeatCount="indefinite"
+          />
+        )}
+      </circle>
     </g>
   );
 }

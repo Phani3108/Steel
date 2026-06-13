@@ -2,7 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { LiveDot, Panel, Pill, SectionHeader, Spinner } from "@/components/ui";
+import {
+  LiveDot,
+  Panel,
+  Pill,
+  ReferenceBadge,
+  SectionHeader,
+  Spinner,
+} from "@/components/ui";
 import type { CostRow } from "@/lib/api";
 import { COLORS, withAlpha } from "@/lib/theme";
 import { usePoll } from "@/lib/usePoll";
@@ -18,6 +25,7 @@ import {
 import { fmtCompact, fmtUsdAxis, fmtUsdCompact } from "./_components/format";
 import { LiveStrip, type LiveChannel } from "./_components/LiveStrip";
 import { referenceCosts } from "./_components/referenceCosts";
+import { RunCostList } from "./_components/RunCostList";
 import { TOKEN_LEGEND, TokenFlow, type TokenDatum } from "./_components/TokenFlow";
 
 const POLL_MS = 3000;
@@ -61,6 +69,9 @@ export default function TelemetryPage() {
   const usingReference = offline && (data === null || data.length === 0);
   const rows: CostRow[] = usingReference ? referenceCosts(by) : (data ?? []);
 
+  // The run pivot becomes "cost per procurement" — a navigable list, not a chart.
+  const byRun = by === "run_id";
+
   const t = totalsOf(rows);
 
   // Rolling live series (spend / calls / tokens), keyed off totals on each poll.
@@ -95,10 +106,10 @@ export default function TelemetryPage() {
 
   const channels: LiveChannel[] = [
     {
-      label: "spend / window",
+      label: "modeled cost / window",
       series: spendSeries,
       current: fmtUsdCompact(t.cost),
-      color: COLORS.accent,
+      color: COLORS.warn,
     },
     {
       label: "calls / window",
@@ -153,9 +164,10 @@ export default function TelemetryPage() {
       <SectionHeader
         kicker="jai-meter · diagnostics"
         title="Telemetry"
-        subtitle="The meter — every model call priced, every token counted. Live cost and throughput across the fleet, sampled every 3 seconds."
+        subtitle="The meter — real calls and tokens counted on every model invocation, sampled every 3 seconds. Cost is modeled from real per-model rates × those real tokens (no live API spend)."
         action={
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <ReferenceBadge mode={usingReference ? "reference" : "modeled"} />
             <LiveDot
               live={!offline}
               color={usingReference ? COLORS.warn : undefined}
@@ -167,39 +179,41 @@ export default function TelemetryPage() {
 
       {usingReference && (
         <div
-          className="flex items-center gap-2 rounded-md border px-3 py-2 text-xs"
+          className="flex flex-wrap items-center gap-2.5 rounded-md border px-3 py-2 text-xs"
           style={{
-            borderColor: withAlpha(COLORS.warn, 0.35),
-            background: withAlpha(COLORS.warn, 0.08),
-            color: COLORS.warn,
+            borderColor: withAlpha(COLORS.autonomy, 0.35),
+            background: withAlpha(COLORS.autonomy, 0.08),
+            color: COLORS.autonomy,
           }}
         >
-          <span aria-hidden>◇</span>
-          live telemetry offline — showing reference fleet snapshot
+          <ReferenceBadge mode="reference" />
+          <span>live telemetry unreachable — showing a reference fleet snapshot</span>
         </div>
       )}
 
       {/* headline instruments */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <HeadlineStat
-          label="total spend"
-          value={t.cost}
-          format={fmtUsdCompact}
-          accent={COLORS.accent}
-          glow
-        />
-        <HeadlineStat
           label="model calls"
           value={t.calls}
           format={(n) => fmtCompact(Math.round(n))}
           accent={COLORS.ok}
+          sub="real · counted live"
         />
         <HeadlineStat
           label="tokens processed"
           value={t.inputTokens + t.outputTokens}
           format={(n) => fmtCompact(Math.round(n))}
           accent={COLORS.autonomy}
-          sub={`${(ratio * 100).toFixed(0)}% output`}
+          sub={`real · ${(ratio * 100).toFixed(0)}% output`}
+        />
+        <HeadlineStat
+          label="modeled cost"
+          value={t.cost}
+          format={fmtUsdCompact}
+          accent={COLORS.warn}
+          sub="rates × real tokens"
+          glow
         />
       </div>
 
@@ -217,46 +231,67 @@ export default function TelemetryPage() {
         <LiveStrip channels={channels} />
       </Panel>
 
-      {/* cost by dimension — the centerpiece */}
+      {/* cost by dimension — the centerpiece. "run" pivots to cost-per-procurement. */}
       <Panel
         accent="accent"
         flush
-        title="cost by dimension"
+        title={byRun ? "cost per procurement" : "modeled cost by dimension"}
         action={
-          <div
-            className="flex rounded-md border p-0.5"
-            style={{ borderColor: COLORS.line }}
-            role="tablist"
-            aria-label="cost pivot dimension"
-          >
-            {TELEM_DIMENSIONS.map((d) => {
-              const active = by === d.value;
-              return (
-                <button
-                  key={d.value}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setBy(d.value)}
-                  className="focus-ring metric rounded px-2.5 py-1 text-[11px] tracking-wide transition-colors"
-                  style={{
-                    background: active ? withAlpha(COLORS.accent, 0.14) : "transparent",
-                    color: active ? COLORS.accent : COLORS.inkFaint,
-                  }}
-                >
-                  {d.label}
-                </button>
-              );
-            })}
+          <div className="flex flex-wrap items-center justify-end gap-2.5">
+            <ReferenceBadge mode={usingReference ? "reference" : "modeled"} />
+            <div
+              className="flex rounded-md border p-0.5"
+              style={{ borderColor: COLORS.line }}
+              role="tablist"
+              aria-label="cost pivot dimension"
+            >
+              {TELEM_DIMENSIONS.map((d) => {
+                const active = by === d.value;
+                return (
+                  <button
+                    key={d.value}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setBy(d.value)}
+                    className="focus-ring metric rounded px-2.5 py-1 text-[11px] tracking-wide transition-colors"
+                    style={{
+                      background: active ? withAlpha(COLORS.accent, 0.14) : "transparent",
+                      color: active ? COLORS.accent : COLORS.inkFaint,
+                    }}
+                  >
+                    {d.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         }
       >
-        {barData.length > 0 ? (
+        {byRun ? (
+          rows.length > 0 ? (
+            <>
+              <RunCostList rows={rows} linked={!usingReference} max={10} />
+              <div className="flex items-center justify-between border-t border-line px-4 py-2.5">
+                <span className="label-cap">
+                  {usingReference
+                    ? "reference runs · click disabled offline"
+                    : "each run → its full audit trail"}
+                </span>
+                <span className="metric text-[10px]" style={{ color: COLORS.inkFaint }}>
+                  total {fmtUsdCompact(t.cost)} modeled
+                </span>
+              </div>
+            </>
+          ) : (
+            <EmptyPlot loaded={loaded} />
+          )
+        ) : barData.length > 0 ? (
           <div className="px-3 py-3">
             <BarChart data={barData} format={fmtUsdAxis} max={9} />
             <div className="mt-1 flex items-center justify-between px-1">
               <span className="label-cap">
-                {TELEM_DIMENSIONS.find((d) => d.value === by)?.keyHeader} · cost (usd)
+                {TELEM_DIMENSIONS.find((d) => d.value === by)?.keyHeader} · modeled cost (usd)
               </span>
               {overflow > 0 && (
                 <span className="metric text-[10px]" style={{ color: COLORS.inkFaint }}>

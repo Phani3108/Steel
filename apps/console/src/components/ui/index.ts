@@ -15,3 +15,5 @@ export { Chip } from "./Chip";
 export { Spinner } from "./Spinner";
 export { EmptyState } from "./EmptyState";
 export { LiveDot } from "./LiveDot";
+export { Term, GLOSSARY } from "./Term";
+export { ReferenceBadge, type ReferenceMode } from "./ReferenceBadge";

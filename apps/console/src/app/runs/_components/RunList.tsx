@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 
 import { Pill, SystemBadge } from "@/components/ui";
@@ -72,7 +73,7 @@ export function RunList({ runs, selected, onSelect, loaded }: RunListProps) {
         const active = run.run_id === selected;
         const oc = outcome ? outcomeColor(outcome) : COLORS.inkFaint;
         return (
-          <li key={run.run_id} className="relative">
+          <li key={run.run_id} className="group/row relative">
             {active && (
               <span
                 aria-hidden
@@ -80,6 +81,18 @@ export function RunList({ runs, selected, onSelect, loaded }: RunListProps) {
                 style={{ background: oc, boxShadow: `0 0 8px -1px ${oc}` }}
               />
             )}
+            {/* deep-link to the standalone run-detail view (a run_id you can click).
+                Always visible so the audit index reads as navigable — the row's own
+                click still drives the inline master-detail preview beside it. */}
+            <Link
+              href={`/runs/${encodeURIComponent(run.run_id)}`}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`Open run ${run.run_id} detail`}
+              title="open full run detail →"
+              className="focus-ring absolute right-2 top-2 z-10 rounded border border-line bg-panel-2/80 px-1.5 py-0.5 font-mono text-[10px] text-ink-faint opacity-70 transition-all hover:border-accent/50 hover:text-accent group-hover/row:opacity-100"
+            >
+              open →
+            </Link>
             <button
               type="button"
               onClick={() => onSelect(run.run_id)}
@@ -89,7 +102,7 @@ export function RunList({ runs, selected, onSelect, loaded }: RunListProps) {
               style={active ? { background: withAlpha(oc, 0.06) } : undefined}
               aria-current={active ? "true" : undefined}
             >
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center justify-between gap-3 pr-12">
                 <span className="metric truncate text-[13px] text-ink">
                   {run.run_id}
                 </span>

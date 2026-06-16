@@ -1,4 +1,4 @@
-"""Standalone jai-governor demo: seven pre-action checks against the versioned
+"""Standalone steel-governor demo: seven pre-action checks against the versioned
 procurement policy. Pure Python + YAML — no database, no model, no network.
 
 Run: python parts/governor/demo/demo.py
@@ -6,8 +6,8 @@ Run: python parts/governor/demo/demo.py
 
 from __future__ import annotations
 
-from jai_governor import Governor
-from jai_manifest import Actor, RunContext
+from steel_governor import Governor
+from steel_manifest import Actor, RunContext
 
 CHECKS: list[tuple[str, str, str, dict]] = [
     # label-role, role, action, params
@@ -48,7 +48,7 @@ CHECKS: list[tuple[str, str, str, dict]] = [
 
 def main() -> int:
     gov = Governor()
-    print(f"jai-governor — policy {gov.policy_path} (version {gov.version})\n")
+    print(f"steel-governor — policy {gov.policy_path} (version {gov.version})\n")
 
     for label, role, action, params in CHECKS:
         ctx = RunContext(tenant_id="acme", actor=Actor(id="u1", name="Pat", role=role))

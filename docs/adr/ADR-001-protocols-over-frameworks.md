@@ -13,10 +13,10 @@ the framework matters, and will keep being replaced.
 
 ## Decision
 
-Agent definitions live in a framework-agnostic **Agent Manifest** (`jai-manifest`,
-pydantic → JSON Schema). Only `jai-engine` imports an orchestration framework
+Agent definitions live in a framework-agnostic **Agent Manifest** (`steel-manifest`,
+pydantic → JSON Schema). Only `steel-engine` imports an orchestration framework
 (LangGraph 1.x today). Tools are referenced as MCP server/tool names, never Python
-imports. Prompts are versioned files, never inline strings. Evals (`jai-dyno`) run
+imports. Prompts are versioned files, never inline strings. Evals (`steel-dyno`) run
 against manifests, not framework objects.
 
 Portability is **proven, not asserted**: P4 ships a ~150-line plain-loop second runtime

@@ -1,6 +1,6 @@
 """Modeled-cost pricing: a true function of token usage, never zero for real work."""
 
-from jai_gateway.pricing import RATES_PER_MTOK, estimate_tokens, modeled_cost
+from steel_gateway.pricing import RATES_PER_MTOK, estimate_tokens, modeled_cost
 
 
 def test_cost_scales_with_tokens_and_is_positive():

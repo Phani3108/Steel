@@ -1,5 +1,5 @@
 /**
- * JAI cockpit design tokens for TypeScript / hand-rolled SVG.
+ * STEEL cockpit design tokens for TypeScript / hand-rolled SVG.
  *
  * These are the SAME values defined as CSS variables in app/globals.css.
  * Markup should prefer the Tailwind utilities (`text-accent`, `bg-panel`, …);

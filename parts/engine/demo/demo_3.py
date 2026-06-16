@@ -5,14 +5,14 @@ and spend specialists over the mesh, then runs a governed sourcing event — and
 agent's work lands under ONE run_id, ONE audit chain, ONE cost rollup. The human then
 clears both gates and the event awards.
 
-Imports jai_api.fleet — assembler-tier glue, like the other demos. Requires docker
+Imports steel_api.fleet — assembler-tier glue, like the other demos. Requires docker
 compose (postgres + mock gateway); no API keys.
 """
 
-from jai_api.fleet import build_fleet
-from jai_blackbox import BlackBox
-from jai_manifest import Actor, RunContext
-from jai_meter import Meter
+from steel_api.fleet import build_fleet
+from steel_blackbox import BlackBox
+from steel_manifest import Actor, RunContext
+from steel_meter import Meter
 
 
 def main() -> None:

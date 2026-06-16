@@ -26,7 +26,7 @@ const STEPS = [
 /**
  * Idle state — shown before a mission launches. The orchestrator fan-out hero
  * plus a three-beat explanation of what a mission does. Keeps the empty page a
- * compelling demo of the JAI-Orchestrator story.
+ * compelling demo of the STEEL-Orchestrator story.
  */
 export function MissionIdle() {
   return (

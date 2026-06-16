@@ -1,4 +1,4 @@
-# jai-blackbox — the flight recorder
+# steel-blackbox — the flight recorder
 
 **System:** SAFETY · **Standalone use case:** a tamper-evident audit log for ANY agent
 system — point it at a Postgres, append `AuditEvent`s, and `verify` proves in one walk
@@ -11,13 +11,13 @@ is linear under concurrent writers. `verify()` recomputes every hash **and** cro
 every stored column against its canonical payload — so editing any column of any row
 (even `detail` jsonb) is detected, with the exact `seq` of the break.
 
-Owns exactly one schema namespace: `blackbox` (ADR-003). Imports only `jai_manifest`.
+Owns exactly one schema namespace: `blackbox` (ADR-003). Imports only `steel_manifest`.
 
 ## Standalone usage
 
 ```python
-from jai_manifest import AuditEvent
-from jai_blackbox import BlackBox
+from steel_manifest import AuditEvent
+from steel_blackbox import BlackBox
 
 box = BlackBox()                       # or BlackBox("postgresql://user:pw@host/db")
 box.ensure_schema()                    # idempotent — schema, table, indexes
@@ -36,12 +36,12 @@ for row in box.tail(n=10, run_id="run_1"):
 ```
 
 ```sh
-jai-blackbox tail -n 10                # last 10 events, chain order
-jai-blackbox verify                    # exit 1 if the chain is broken
-jai-blackbox verify --run-id run_1     # same walk; reports that run's row count
+steel-blackbox tail -n 10                # last 10 events, chain order
+steel-blackbox verify                    # exit 1 if the chain is broken
+steel-blackbox verify --run-id run_1     # same walk; reports that run's row count
 ```
 
-`POSTGRES_URL` is the connection fallback (default `postgresql://jai:jai@localhost:5433/jai`).
+`POSTGRES_URL` is the connection fallback (default `postgresql://steel:steel@localhost:5433/steel`).
 
 ## Demo
 

@@ -20,9 +20,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JAI Console — Cockpit",
+  title: "STEEL Console — Cockpit",
   description:
-    "Mission control for the JAI agentic procurement fleet — catalog, network, orchestration, gates, telemetry, and tamper-evident audit.",
+    "Mission control for the STEEL agentic procurement fleet — catalog, network, orchestration, gates, telemetry, and tamper-evident audit.",
 };
 
 export default function RootLayout({
@@ -42,7 +42,7 @@ export default function RootLayout({
             <Link
               href="/"
               className="focus-ring group flex items-center gap-2.5 rounded-md"
-              aria-label="JAI console home"
+              aria-label="STEEL console home"
             >
               <span
                 aria-hidden
@@ -50,7 +50,7 @@ export default function RootLayout({
               >
                 <span className="absolute inset-0 rounded-md glow opacity-60 transition-opacity group-hover:opacity-100" />
                 <span className="metric relative text-[11px] font-bold tracking-tight text-accent">
-                  JAI
+                  STEEL
                 </span>
               </span>
               <span className="hidden flex-col leading-none sm:flex">
@@ -75,7 +75,7 @@ export default function RootLayout({
 
         <footer className="border-t border-line/70">
           <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 font-mono text-[10px] tracking-wider text-ink-ghost">
-            <span>jai-console · personal research platform · all data synthetic</span>
+            <span>steel-console · personal research platform · all data synthetic</span>
             <span className="hidden lg:inline">built like a car — six systems, one cockpit</span>
             <div className="ml-auto">
               <GovernanceNotice />

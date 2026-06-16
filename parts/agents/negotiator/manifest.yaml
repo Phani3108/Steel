@@ -1,7 +1,7 @@
 # agent-negotiator — Pactum-style autonomous negotiation under a bounded mandate.
 # It aims for the target, never closes above the walkaway, and CANNOT agree to any
 # price above its hard spend cap — the governor blocks that regardless of reasoning.
-api_version: jai/v1
+api_version: steel/v1
 name: agent-negotiator
 description: >
   Autonomous supplier negotiator: opens below target and works multiple rounds against a

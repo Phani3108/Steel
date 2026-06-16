@@ -71,7 +71,7 @@ export default function NegotiatePage() {
       <SectionHeader
         kicker="cockpit · agent negotiator"
         title="Negotiate"
-        subtitle="Set a seller across the table and a list price, then watch the JAI-Negotiator bargain it down — round by round, offer against counter — and refuse, every time, to cross its mandate cap."
+        subtitle="Set a seller across the table and a list price, then watch the STEEL-Negotiator bargain it down — round by round, offer against counter — and refuse, every time, to cross its mandate cap."
         action={
           referenceMode ? (
             <span

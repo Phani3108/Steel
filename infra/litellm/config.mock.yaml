@@ -1,4 +1,4 @@
-# jai-gateway — KEYLESS MOCK configuration
+# steel-gateway — KEYLESS MOCK configuration
 #
 # Same model groups as config.yaml, but every deployment short-circuits with a
 # config-level mock_response — LiteLLM never contacts a provider, so the full
@@ -13,7 +13,7 @@ model_list:
     litellm_params:
       model: openai/mock-reasoning
       api_key: mock
-      mock_response: "ECHO: Hello from the JAI gateway (mock mode — no provider keys configured)."
+      mock_response: "ECHO: Hello from the STEEL gateway (mock mode — no provider keys configured)."
 
   - model_name: reasoning-max
     litellm_params:

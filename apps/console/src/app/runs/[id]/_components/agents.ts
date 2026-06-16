@@ -34,7 +34,7 @@ function labelFromId(id: string): string {
   const cleaned = id
     .replace(/^agent-/, "")
     .replace(/^mcp-/, "")
-    .replace(/^jai-/, "");
+    .replace(/^steel-/, "");
   return cleaned
     .split(/[-_]/)
     .filter(Boolean)
@@ -52,7 +52,7 @@ function guessSystem(id: string): System {
 
 function guessRole(id: string): AgentMeta["role"] {
   if (id === "human" || id === "operator") return "human";
-  if (id.startsWith("mcp-") || id.startsWith("jai-")) return "service";
+  if (id.startsWith("mcp-") || id.startsWith("steel-")) return "service";
   return "agent";
 }
 

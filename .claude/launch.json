@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "jai-console",
+      "name": "steel-console",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "apps/console", "dev"],
       "port": 3000

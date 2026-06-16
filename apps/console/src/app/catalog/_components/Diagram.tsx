@@ -49,7 +49,7 @@ export function Diagram({
       className="w-full"
       style={{ display: "block" }}
       role="group"
-      aria-label="JAI platform — exploded vehicle diagram"
+      aria-label="STEEL platform — exploded vehicle diagram"
     >
       <defs>
         <linearGradient id="spineGrad" x1="0" y1="0" x2="0" y2="1">

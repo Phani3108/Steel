@@ -1,4 +1,4 @@
-"""Fixtures for jai-foundry tests. Postgres-backed tests skip when no server is reachable."""
+"""Fixtures for steel-foundry tests. Postgres-backed tests skip when no server is reachable."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import psycopg
 import pytest
-from jai_foundry.generate import DEFAULT_SEED, generate
+from steel_foundry.generate import DEFAULT_SEED, generate
 
 
 @pytest.fixture(scope="session")
@@ -20,7 +20,7 @@ def seed_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 @pytest.fixture
 def pg_url() -> str:
-    url = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+    url = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
     try:
         conn = psycopg.connect(url, connect_timeout=2)
     except Exception:

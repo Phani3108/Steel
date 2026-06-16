@@ -8,9 +8,9 @@ from collections.abc import Iterator
 
 import psycopg
 import pytest
-from jai_blackbox import BlackBox
+from steel_blackbox import BlackBox
 
-PG_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+PG_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 
 
 @pytest.fixture

@@ -1,10 +1,10 @@
-# jai-governor — the speed governor
+# steel-governor — the speed governor
 
 **System:** SAFETY · **Standalone use case:** a drop-in pre-action policy engine for any
 agent stack — point it at a versioned YAML policy file and call `check()` before every
 consequential action. Pure Python + pydantic + YAML: no database, no model calls, no
 network. The agent can reason however it likes; the governor evaluates fixed rules and
-returns an auditable `Decision`. No JAI required: the only input shape is a
+returns an auditable `Decision`. No STEEL required: the only input shape is a
 `RunContext`-like identity envelope (tenant + actor role) plus the action params.
 
 The policy is a *file* (`policies/procurement.yaml`), versioned in git. Every `Decision`
@@ -19,7 +19,7 @@ allowed, gated, or denied. Unknown actions and unknown roles are **denied by def
 | `.version` | the loaded policy's version string |
 | `Decision` | `allowed: bool` · `reasons: list[str]` · `policy_version: str` · `requires_gate: str \| None` |
 
-`requires_gate` names the HITL gate (jai-brakes) that must approve before proceeding —
+`requires_gate` names the HITL gate (steel-brakes) that must approve before proceeding —
 `"award_approval"` for over-threshold awards, `"intake_escalation"` for over-threshold
 intake approvals. Allowed-with-gate is not a denial: the action is lawful, but a human signs.
 
@@ -37,8 +37,8 @@ Role ceilings: requester $5,000 · category_manager $50,000 · cpo $250,000.
 ## Usage
 
 ```python
-from jai_manifest import Actor, RunContext
-from jai_governor import Governor
+from steel_manifest import Actor, RunContext
+from steel_governor import Governor
 
 gov = Governor()
 ctx = RunContext(tenant_id="acme", actor=Actor(id="u1", role="category_manager"))

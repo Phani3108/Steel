@@ -1,4 +1,4 @@
-"""Tests for jai_brakes — require Postgres, skip cleanly when it is unavailable."""
+"""Tests for steel_brakes — require Postgres, skip cleanly when it is unavailable."""
 
 from __future__ import annotations
 
@@ -6,10 +6,10 @@ import os
 
 import psycopg
 import pytest
-from jai_brakes import Brakes
-from jai_manifest import Actor, RunContext
+from steel_brakes import Brakes
+from steel_manifest import Actor, RunContext
 
-POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 
 
 @pytest.fixture

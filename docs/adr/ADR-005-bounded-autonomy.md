@@ -19,7 +19,7 @@ twice, defence in depth:
    `max_spend_usd`, a target and a walkaway (as fractions of list), and a max round count.
    The negotiation loop clamps every offer to the mandate ceiling — it cannot *table* a
    number it could not honour, let alone accept one.
-2. **The governor is the backstop.** Before any close is final, `jai-governor` is asked to
+2. **The governor is the backstop.** Before any close is final, `steel-governor` is asked to
    bless it (reusing the award policy's mandate hard-deny). If the round logic were ever
    buggy or adversarially steered past the clamp, the governor denies the close, the event
    is audited, and the agent **walks** rather than breach. A constraint violation is
@@ -32,7 +32,7 @@ check at the irreversible step is how any money-moving agent earns higher autono
 ## Consequences
 
 - The negotiator can be promoted toward higher autonomy because its worst case is bounded
-  and *measured*, not asserted (see the eval-gated maturity ladder, `jai-dyno`).
+  and *measured*, not asserted (see the eval-gated maturity ladder, `steel-dyno`).
 - The walkaway is a feature, not a failure: refusing a deal that would breach the mandate
   is the correct, auditable outcome.
 - Enforcement reuses existing policy (no negotiation-specific governor code) — the cap is

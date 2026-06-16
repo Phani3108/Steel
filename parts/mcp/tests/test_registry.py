@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 
 import pytest
-from jai_mcp import SERVERS, in_process_tools
+from steel_mcp import SERVERS, in_process_tools
 
 EXPECTED = {
     "supplier-master": {"search_suppliers", "get_supplier"},

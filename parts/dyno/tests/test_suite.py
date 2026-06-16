@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 import pytest
-from jai_dyno.cli import main
-from jai_dyno.suite import Case, Suite, load_suite
+from steel_dyno.cli import main
+from steel_dyno.suite import Case, Suite, load_suite
 from pydantic import ValidationError
 
 REPO_ROOT = Path(__file__).resolve().parents[3]

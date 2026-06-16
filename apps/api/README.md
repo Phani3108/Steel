@@ -1,22 +1,22 @@
-# jai-api — the JAI control plane
+# steel-api — the STEEL control plane
 
 **SYSTEM: COCKPIT** (backend) · one-line purpose: *the read-only FastAPI surface the
 console reads — costs, runs, audit verification, health.*
 
 ## Standalone use case
 
-Point `jai-api` at **any** Postgres that holds the two published table contracts —
+Point `steel-api` at **any** Postgres that holds the two published table contracts —
 `meter.task_ledger` (per-action cost ledger) and `blackbox.audit_events` (hash-chained
 audit log) — and you get an instant read-only operations API: cost rollups by tenant /
 agent / run / model group, a run browser, and independent tamper verification of the
-audit chain. No other JAI part needs to be installed or running; the chain check
+audit chain. No other STEEL part needs to be installed or running; the chain check
 recomputes SHA-256 hashes itself.
 
 ## The boundary decision (P0)
 
 The control plane is assembler-tier: it reads other parts only through their published
 interfaces. At P0, the parts' **tables are their public read contract** for the control
-plane — `jai_api/queries.py` issues plain `SELECT`s against `blackbox.audit_events` and
+plane — `steel_api/queries.py` issues plain `SELECT`s against `blackbox.audit_events` and
 `meter.task_ledger` and nothing else. Every query is read-only; this app owns **no**
 schema and never writes a row. Revisit when the parts grow client libraries.
 
@@ -37,7 +37,7 @@ When Postgres is down, data routes answer `503` with
 ## Usage
 
 ```bash
-uv run jai-api                      # serve on PORT (default 8400), HOST (default 127.0.0.1)
+uv run steel-api                      # serve on PORT (default 8400), HOST (default 127.0.0.1)
 curl http://localhost:8400/health
 curl "http://localhost:8400/costs?by=model_group"
 curl http://localhost:8400/audit/verify
@@ -46,7 +46,7 @@ curl http://localhost:8400/audit/verify
 Or embed the app factory:
 
 ```python
-from jai_api import create_app
+from steel_api import create_app
 
 app = create_app()   # hand to any ASGI server
 ```
@@ -68,6 +68,6 @@ uv run pytest apps/api -q            # data-route tests skip when Postgres is un
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `POSTGRES_URL` | `postgresql://jai:jai@localhost:5433/jai` | read-only source database |
-| `PORT` | `8400` | serve port for `jai-api` |
-| `HOST` | `127.0.0.1` | bind address for `jai-api` |
+| `POSTGRES_URL` | `postgresql://steel:steel@localhost:5433/steel` | read-only source database |
+| `PORT` | `8400` | serve port for `steel-api` |
+| `HOST` | `127.0.0.1` | bind address for `steel-api` |

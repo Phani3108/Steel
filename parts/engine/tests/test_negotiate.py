@@ -4,8 +4,8 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from engine_fakes import FakeBlackBox
-from jai_engine.negotiate import compile_negotiator
-from jai_manifest import Actor, RunContext, load_manifest
+from steel_engine.negotiate import compile_negotiator
+from steel_manifest import Actor, RunContext, load_manifest
 
 AGENT_DIR = Path(__file__).resolve().parents[2] / "agents" / "negotiator"
 

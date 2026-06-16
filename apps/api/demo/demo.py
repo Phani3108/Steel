@@ -10,7 +10,7 @@ from __future__ import annotations
 import json
 
 from fastapi.testclient import TestClient
-from jai_api.main import create_app
+from steel_api.main import create_app
 
 
 def main() -> None:
@@ -20,7 +20,7 @@ def main() -> None:
         print(f"GET {path}  ->  {resp.status_code}")
         print(json.dumps(resp.json(), indent=2, default=str))
         print()
-    print("Serve it for real:   uv run jai-api          (PORT env, default 8400)")
+    print("Serve it for real:   uv run steel-api          (PORT env, default 8400)")
     print("Then for example:    curl http://localhost:8400/health")
 
 

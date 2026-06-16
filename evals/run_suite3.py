@@ -12,11 +12,11 @@ import json
 import sys
 from pathlib import Path
 
-from jai_api.fleet import build_fleet, run_orchestration
-from jai_blackbox import BlackBox
-from jai_dyno.harness import run_suite
-from jai_dyno.suite import Case, load_suite
-from jai_manifest import Actor, RunContext
+from steel_api.fleet import build_fleet, run_orchestration
+from steel_blackbox import BlackBox
+from steel_dyno.harness import run_suite
+from steel_dyno.suite import Case, load_suite
+from steel_manifest import Actor, RunContext
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "evals" / "suite3_network" / "scenarios.yaml"

@@ -1,7 +1,7 @@
 # agent-orchestrator — the coordinator. One intake becomes a fleet operation:
 # triage routes it, specialists assess risk and spend in the same trace, and a
 # governed sourcing event runs to award. One run_id, one audit chain, one cost rollup.
-api_version: jai/v1
+api_version: steel/v1
 name: agent-orchestrator
 description: >
   Procurement coordinator: triages an intake, fans out to risk and spend specialists

@@ -30,7 +30,7 @@ async function fetchApprovals(): Promise<Approval[]> {
 /**
  * /approvals — GATES.
  *
- * The human-in-the-loop inbox for jai-brakes. Every row is an agent run that hit
+ * The human-in-the-loop inbox for steel-brakes. Every row is an agent run that hit
  * a policy gate (over-mandate award, RFx publish) and PAUSED ITSELF DURABLY mid-
  * flight; it is sitting in Postgres waiting on a verdict. Approving or rejecting
  * here is what lets the parked run resume — that's the story the page tells.

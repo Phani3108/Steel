@@ -84,7 +84,7 @@ export function MaturityLadder() {
     >
       <p className="mb-4 max-w-2xl text-[12px] leading-relaxed text-ink-faint">
         Autonomy is earned, not assigned. An agent climbs a level only when its
-        jai-dyno scorecards clear the gate — no scorecard, no ship; below target,
+        steel-dyno scorecards clear the gate — no scorecard, no ship; below target,
         no promotion. This ladder is read directly off the evals, never edited.
       </p>
 

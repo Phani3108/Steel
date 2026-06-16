@@ -1,9 +1,9 @@
-# jai-brakes — the brakes
+# steel-brakes — the brakes
 
 **System:** SAFETY · **Standalone use case:** drop-in human-in-the-loop approval gates and an
 agent kill switch for any agent stack — point it at a Postgres and you have durable
 request → pending → human decision → resume state plus a per-agent emergency stop, with no
-queue, no callback infrastructure, and nothing lost on restart. No JAI required: the only
+queue, no callback infrastructure, and nothing lost on restart. No STEEL required: the only
 input is a `RunContext`-shaped identity envelope.
 
 Two tables, owned schema namespace `brakes` (ADR-003), no other part's schema touched.
@@ -28,10 +28,10 @@ the same Postgres.
 ## Usage
 
 ```python
-from jai_brakes import Brakes
-from jai_manifest import Actor, RunContext
+from steel_brakes import Brakes
+from steel_manifest import Actor, RunContext
 
-brakes = Brakes()          # uses POSTGRES_URL (default postgresql://jai:jai@localhost:5433/jai)
+brakes = Brakes()          # uses POSTGRES_URL (default postgresql://steel:steel@localhost:5433/steel)
 brakes.ensure_schema()
 
 ctx = RunContext(

@@ -1,4 +1,4 @@
-# jai-mcp — the drivetrain
+# steel-mcp — the drivetrain
 
 **System:** DRIVETRAIN · **Standalone use case:** five procurement tool servers any
 MCP-speaking client (Claude Desktop, an agent runtime, JAGGAER One, a script) can plug
@@ -9,9 +9,9 @@ them is swappable for any real S2P system's REST APIs without touching a single 
 
 Every server has two faces:
 
-1. **Plain typed functions** (`jai_mcp.<module>.TOOLS`) — the in-process API other parts
-   get injected with (jai-engine consumes this seam via `in_process_tools()`).
-2. **A FastMCP server object** (`jai_mcp.<module>.server`) — the same functions
+1. **Plain typed functions** (`steel_mcp.<module>.TOOLS`) — the in-process API other parts
+   get injected with (steel-engine consumes this seam via `in_process_tools()`).
+2. **A FastMCP server object** (`steel_mcp.<module>.server`) — the same functions
    registered as MCP tools, servable over streamable HTTP.
 
 Identity travels explicitly: every tool takes `tenant_id` and `role` parameters.
@@ -37,7 +37,7 @@ cortex/foundry published table contracts.
 ## Usage
 
 ```python
-from jai_mcp import SERVERS, in_process_tools
+from steel_mcp import SERVERS, in_process_tools
 
 sourcing = in_process_tools("sourcing-events")
 event = sourcing["create_event"](
@@ -50,8 +50,8 @@ SERVERS["sourcing-events"]   # the same tools as a FastMCP object
 Or over the wire:
 
 ```sh
-uv run jai-mcp serve supplier-master --port 8101   # streamable HTTP at /mcp
-uv run jai-mcp tools sourcing-events               # print a server's tool names
+uv run steel-mcp serve supplier-master --port 8101   # streamable HTTP at /mcp
+uv run steel-mcp tools sourcing-events               # print a server's tool names
 ```
 
 ## Demo

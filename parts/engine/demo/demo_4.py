@@ -3,12 +3,12 @@
 The negotiator works three seller personas over the mesh, closing inside its ZOPA on
 price and payment terms. Then a deal whose only prices exceed the hard cap: the negotiator
 walks rather than breach it — a constraint violation is impossible by construction, and
-the governor is the backstop. Imports jai_api.fleet (assembler-tier). Needs docker
+the governor is the backstop. Imports steel_api.fleet (assembler-tier). Needs docker
 compose (postgres + mock gateway); no API keys.
 """
 
-from jai_api.fleet import build_fleet, run_negotiation
-from jai_manifest import Actor, RunContext
+from steel_api.fleet import build_fleet, run_negotiation
+from steel_manifest import Actor, RunContext
 
 
 def show(payload: dict) -> None:

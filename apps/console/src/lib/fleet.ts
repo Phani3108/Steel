@@ -1,5 +1,5 @@
 /**
- * THE REFERENCE FLEET — the built-in, offline-safe picture of the JAI vehicle.
+ * THE REFERENCE FLEET — the built-in, offline-safe picture of the STEEL vehicle.
  *
  * Two jobs:
  *  1. Graceful fallback. When GET /registry or /network 404 / 503 (those endpoints
@@ -47,21 +47,21 @@ export const REFERENCE_FLEET: FleetSystem[] = [
     tagline: "intelligence supply",
     parts: [
       {
-        name: "jai-gateway",
+        name: "steel-gateway",
         system: "POWERTRAIN",
         purpose:
           "One fuel line — LiteLLM model access with budgets, tags, and mock mode.",
         status: "active",
       },
       {
-        name: "jai-manifest",
+        name: "steel-manifest",
         system: "POWERTRAIN",
         purpose:
           "The part drawings — agent specs, RunContext, and the audit-event contract.",
         status: "active",
       },
       {
-        name: "jai-engine",
+        name: "steel-engine",
         system: "POWERTRAIN",
         purpose: "Compiles manifests into runnable agents and pipelines.",
         status: "active",
@@ -73,13 +73,13 @@ export const REFERENCE_FLEET: FleetSystem[] = [
     tagline: "knowledge",
     parts: [
       {
-        name: "jai-cortex",
+        name: "steel-cortex",
         system: "CHASSIS",
         purpose: "Retrieval memory and the semantic layer over the procurement world.",
         status: "active",
       },
       {
-        name: "jai-foundry",
+        name: "steel-foundry",
         system: "CHASSIS",
         purpose: "Seeded synthetic world — suppliers, POs, invoices, RFx, news.",
         status: "active",
@@ -127,31 +127,31 @@ export const REFERENCE_FLEET: FleetSystem[] = [
     tagline: "trust",
     parts: [
       {
-        name: "jai-blackbox",
+        name: "steel-blackbox",
         system: "SAFETY",
         purpose: "Tamper-evident, hash-chained audit trail for every action.",
         status: "active",
       },
       {
-        name: "jai-governor",
+        name: "steel-governor",
         system: "SAFETY",
         purpose: "Policy enforcement before actions — RBAC, mandates, scopes.",
         status: "active",
       },
       {
-        name: "jai-dyno",
+        name: "steel-dyno",
         system: "SAFETY",
         purpose: "Eval harness and scorecards — no scorecard, no ship.",
         status: "active",
       },
       {
-        name: "jai-brakes",
+        name: "steel-brakes",
         system: "SAFETY",
         purpose: "Human-in-the-loop approval gates that pause runs durably.",
         status: "active",
       },
       {
-        name: "jai-meter",
+        name: "steel-meter",
         system: "SAFETY",
         purpose: "Cost ledger — who spent what, on which run and model.",
         status: "active",
@@ -163,13 +163,13 @@ export const REFERENCE_FLEET: FleetSystem[] = [
     tagline: "the fleet",
     parts: [
       {
-        name: "jai-registry",
+        name: "steel-registry",
         system: "NETWORK",
         purpose: "Catalog of agents, their autonomy levels, mandates, and scorecards.",
         status: "active",
       },
       {
-        name: "jai-mesh",
+        name: "steel-mesh",
         system: "NETWORK",
         purpose: "A2A — agents talking over the open agent-to-agent protocol.",
         status: "active",
@@ -250,7 +250,7 @@ export const REFERENCE_FLEET: FleetSystem[] = [
     tagline: "human interface",
     parts: [
       {
-        name: "jai-console",
+        name: "steel-console",
         system: "COCKPIT",
         purpose: "This app — mission control for the whole fleet.",
         status: "active",
@@ -293,7 +293,7 @@ export interface NetworkTopology {
  * Reference topology (matches the /network shape):
  *   human → agent-orchestrator → { intake-triage, risk-sentinel, spend-analyst, agent-sourcing }
  *   agent-sourcing → mcp-sourcing-events
- *   agent-supplier-intel → jai-cortex
+ *   agent-supplier-intel → steel-cortex
  */
 export const REFERENCE_NETWORK: NetworkTopology = {
   nodes: [
@@ -335,7 +335,7 @@ export const REFERENCE_NETWORK: NetworkTopology = {
       system: "DRIVETRAIN",
       role: "service",
     },
-    { id: "jai-cortex", label: "Cortex", system: "CHASSIS", role: "service" },
+    { id: "steel-cortex", label: "Cortex", system: "CHASSIS", role: "service" },
   ],
   edges: [
     { source: "human", target: "agent-orchestrator", label: "intake" },
@@ -348,6 +348,6 @@ export const REFERENCE_NETWORK: NetworkTopology = {
       target: "mcp-sourcing-events",
       label: "rfx",
     },
-    { source: "agent-supplier-intel", target: "jai-cortex", label: "retrieve" },
+    { source: "agent-supplier-intel", target: "steel-cortex", label: "retrieve" },
   ],
 };

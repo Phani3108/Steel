@@ -1,23 +1,23 @@
 [project]
-name = "jai-mcp"
+name = "steel-mcp"
 version = "0.1.0"
-description = "jai-mcp — the drivetrain: five procurement MCP servers (supplier-master, sourcing-events, contracts, spend-analytics, intake)"
+description = "steel-mcp — the drivetrain: five procurement MCP servers (supplier-master, sourcing-events, contracts, spend-analytics, intake)"
 requires-python = ">=3.12"
 dependencies = [
-    "jai-manifest",
+    "steel-manifest",
     "mcp>=1.2",
     "psycopg[binary]>=3.2",
 ]
 
 [project.scripts]
-jai-mcp = "jai_mcp.cli:main"
+steel-mcp = "steel_mcp.cli:main"
 
 [tool.uv.sources]
-jai-manifest = { workspace = true }
+steel-manifest = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jai_mcp"]
+packages = ["src/steel_mcp"]

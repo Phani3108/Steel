@@ -8,7 +8,7 @@ autonomy meters. Run: uv run python evals/run_maturity.py
 
 from __future__ import annotations
 
-from jai_api.fleet import maturity_ladder
+from steel_api.fleet import maturity_ladder
 
 LEVELS = {1: "suggest", 2: "advise", 3: "gated", 4: "supervised", 5: "autonomous"}
 

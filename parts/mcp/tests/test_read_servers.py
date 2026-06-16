@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import psycopg
 import pytest
-from jai_mcp import contracts_server, spend_analytics, supplier_master
+from steel_mcp import contracts_server, spend_analytics, supplier_master
 
 TENANT = "TEN-0001"
 CM = "category_manager"

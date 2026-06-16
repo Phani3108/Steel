@@ -1,10 +1,10 @@
-# jai-mesh — the CAN bus
+# steel-mesh — the CAN bus
 
 **System:** NETWORK · **Standalone use case:** an in-process A2A-shaped bus that lets agents
 call each other by skill id while the run context (tenant, actor, budget, trace) rides along
 on every hop — so one orchestration shares one trace across all the agents it touches. No
 database, no network, no framework: pure transport. The only input is a `RunContext`-shaped
-identity envelope (`jai_manifest`), and the agent cards are emitted as real A2A
+identity envelope (`steel_manifest`), and the agent cards are emitted as real A2A
 `.well-known/agent.json` JSON, so a card the mesh dispatches in-process today can be served
 cross-host tomorrow with no change to callers.
 
@@ -38,8 +38,8 @@ for the future HTTP transport (the `HttpTransport` stub marks the seam).
 ## Usage
 
 ```python
-from jai_manifest import Actor, RunContext
-from jai_mesh import AgentCard, Hop, Mesh, Skill
+from steel_manifest import Actor, RunContext
+from steel_mesh import AgentCard, Hop, Mesh, Skill
 
 hops: list[Hop] = []
 mesh = Mesh(on_hop=hops.append)
@@ -73,7 +73,7 @@ mesh.topology()                                      # {"nodes": [...], "skills"
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
-cd /Users/susmitha/Downloads/JAI
+cd /Users/susmitha/Downloads/STEEL
 uv run python parts/mesh/demo/demo.py
 ```
 

@@ -1,4 +1,4 @@
-# jai-cortex — the frame everything mounts to
+# steel-cortex — the frame everything mounts to
 
 **System:** CHASSIS · **Standalone use case:** a permission-aware retrieval layer for any
 multi-tenant dataset — point the ingest at your entities/documents, get tenant- and
@@ -17,14 +17,14 @@ are populated (real-key ingest only — the keyless path is deterministic FTS).
 ## Usage
 
 ```sh
-jai-cortex ingest --from data/seed
-jai-cortex ask "Tell me about supplier Rampart Engineering Inc." --role requester
-jai-cortex ask "What are the terms of the contract 'X'?" --role requester   # → refusal
+steel-cortex ingest --from data/seed
+steel-cortex ask "Tell me about supplier Rampart Engineering Inc." --role requester
+steel-cortex ask "What are the terms of the contract 'X'?" --role requester   # → refusal
 ```
 
 ```python
-from jai_cortex import Cortex
-from jai_manifest import Actor, RunContext
+from steel_cortex import Cortex
+from steel_manifest import Actor, RunContext
 
 cortex = Cortex()
 ctx = RunContext(tenant_id="TEN-0001", actor=Actor(id="u1", role="category_manager"))

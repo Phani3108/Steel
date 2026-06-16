@@ -6,7 +6,7 @@ import { MaturityLadder } from "./_components/MaturityLadder";
 import { TransparencyCard } from "./_components/TransparencyCard";
 
 export const metadata = {
-  title: "Studio · JAI",
+  title: "Studio · STEEL",
   description:
     "Design-time + governance — author a schema-valid agent manifest, watch autonomy earned through scorecards, and see the EU AI Act transparency posture.",
 };
@@ -17,7 +17,7 @@ export const metadata = {
  * The quieter counterpart to the live instruments: where the cockpit's other
  * screens watch agents act, this one is where they are *designed* and *trusted*.
  * Three sections, one page:
- *   1. Build an agent  — compose a real jai/v1 AgentManifest, validated live.
+ *   1. Build an agent  — compose a real steel/v1 AgentManifest, validated live.
  *   2. Maturity ladder — autonomy proven by scorecards, never edited in.
  *   3. Transparency    — the EU AI Act Art. 50 disclosure, made visible.
  */
@@ -31,7 +31,7 @@ export default function StudioPage() {
       />
 
       <SectionLead n="01" title="Build an agent">
-        Compose a real, schema-valid manifest — the same contract jai-engine
+        Compose a real, schema-valid manifest — the same contract steel-engine
         compiles. The studio is design-time, not a no-code runtime.
       </SectionLead>
       <AgentBuilder />

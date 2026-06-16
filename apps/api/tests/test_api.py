@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 
 # Nothing listens on the discard port — connections are refused immediately,
 # which is exactly the "postgres down" condition the app must absorb.
-_DEAD_PG_URL = "postgresql://jai:jai@127.0.0.1:9/jai"
+_DEAD_PG_URL = "postgresql://steel:steel@127.0.0.1:9/steel"
 
 
 def test_health_shape_without_any_service(client: TestClient) -> None:
@@ -104,7 +104,7 @@ def test_audit_verify_recomputes_intact_chain(
 
 def test_network_reference_topology_when_fleet_unavailable() -> None:
     """Without a live fleet, /network returns the canonical structure marked not-live."""
-    from jai_api.fleet import network_topology
+    from steel_api.fleet import network_topology
 
     topo = network_topology(None)
     assert topo["live"] is False

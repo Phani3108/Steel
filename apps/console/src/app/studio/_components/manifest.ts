@@ -2,8 +2,8 @@
  * Live AgentManifest authoring for the Studio.
  *
  * The studio is a DESIGN-TIME concept, not a no-code runtime: the form below
- * emits a real, schema-valid `jai/v1` AgentManifest (mirrors
- * schemas/agent-manifest.schema.json) that the platform's jai-engine could
+ * emits a real, schema-valid `steel/v1` AgentManifest (mirrors
+ * schemas/agent-manifest.schema.json) that the platform's steel-engine could
  * compile. We hand-serialize a small, predictable YAML so the preview reads
  * cleanly and stays diff-friendly — no YAML lib, no surprises.
  */
@@ -113,7 +113,7 @@ function yamlStr(value: string): string {
 }
 
 /**
- * Serialize a draft to a `jai/v1` AgentManifest YAML string.
+ * Serialize a draft to a `steel/v1` AgentManifest YAML string.
  * Field order mirrors how the manifests are authored on disk so the preview
  * looks like something a human checked in.
  */
@@ -126,7 +126,7 @@ export function draftToYaml(draft: AgentDraft): string {
     draft.maxSpendUsd.trim() !== "" && Number.isFinite(spend) && spend > 0;
 
   const lines: string[] = [];
-  lines.push("api_version: jai/v1");
+  lines.push("api_version: steel/v1");
   lines.push(`name: ${yamlStr(name)}`);
   lines.push(`description: ${yamlStr(draft.description.trim())}`);
   lines.push(`autonomy_level: ${lvl}`);

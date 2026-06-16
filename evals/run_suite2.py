@@ -14,14 +14,14 @@ import json
 import sys
 from pathlib import Path
 
-from jai_blackbox import BlackBox
-from jai_brakes import Brakes
-from jai_dyno.harness import run_suite
-from jai_dyno.suite import Case, load_suite
-from jai_engine.sourcing import compile_sourcing
-from jai_governor import Governor
-from jai_manifest import Actor, RunContext, load_manifest
-from jai_mcp.registry import in_process_tools
+from steel_blackbox import BlackBox
+from steel_brakes import Brakes
+from steel_dyno.harness import run_suite
+from steel_dyno.suite import Case, load_suite
+from steel_engine.sourcing import compile_sourcing
+from steel_governor import Governor
+from steel_manifest import Actor, RunContext, load_manifest
+from steel_mcp.registry import in_process_tools
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENT_DIR = ROOT / "parts" / "agents" / "sourcing"

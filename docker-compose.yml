@@ -1,19 +1,19 @@
-name: jai
+name: steel
 
 services:
   postgres:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: jai
-      POSTGRES_PASSWORD: jai
-      POSTGRES_DB: jai
+      POSTGRES_USER: steel
+      POSTGRES_PASSWORD: steel
+      POSTGRES_DB: steel
     ports:
-      - "${JAI_POSTGRES_PORT:-5433}:5432"
+      - "${STEEL_POSTGRES_PORT:-5433}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U jai -d jai"]
+      test: ["CMD-SHELL", "pg_isready -U steel -d steel"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -29,8 +29,8 @@ services:
       # LITELLM_CONFIG_FILE=config.mock.yaml gives a fully keyless gateway (see .env.example)
       - ./infra/litellm/${LITELLM_CONFIG_FILE:-config.yaml}:/app/config.yaml:ro
     environment:
-      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-jai-master-dev}
-      DATABASE_URL: postgresql://jai:jai@postgres:5432/litellm
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-steel-master-dev}
+      DATABASE_URL: postgresql://steel:steel@postgres:5432/litellm
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}

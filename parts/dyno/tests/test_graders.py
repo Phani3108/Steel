@@ -6,8 +6,8 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from jai_dyno.graders import grade_contains, grade_exact, grade_llm_judge
-from jai_manifest import Actor, RunContext
+from steel_dyno.graders import grade_contains, grade_exact, grade_llm_judge
+from steel_manifest import Actor, RunContext
 
 
 class FakeGateway:

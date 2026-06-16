@@ -1,4 +1,4 @@
-api_version: jai/v1
+api_version: steel/v1
 name: agent-intake-triage
 description: >
   Intake triage: classifies a purchase request against policy thresholds and routes it —

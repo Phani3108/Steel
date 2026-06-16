@@ -5,14 +5,14 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
-from jai_gateway import BudgetExceededError, GatewayResponse
-from jai_manifest import AuditEvent, RunContext
+from steel_gateway import BudgetExceededError, GatewayResponse
+from steel_manifest import AuditEvent, RunContext
 
 
 class FakeGateway:
     """Mirrors GatewayClient.complete's surface, including the pre-dispatch budget gate."""
 
-    def __init__(self, reply: str = "ECHO: Hello, JAI.", cost_usd: float = 0.001) -> None:
+    def __init__(self, reply: str = "ECHO: Hello, STEEL.", cost_usd: float = 0.001) -> None:
         self.reply = reply
         self.cost_usd = cost_usd
         self.calls: list[dict[str, Any]] = []

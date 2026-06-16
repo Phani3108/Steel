@@ -1,4 +1,4 @@
-"""jai-mcp standalone demo — a full sourcing lifecycle, in-process.
+"""steel-mcp standalone demo — a full sourcing lifecycle, in-process.
 
 A category manager creates an event, invites three suppliers found through
 supplier-master, opens bidding, collects three bids, scores them, and awards the
@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import json
 
-from jai_mcp import in_process_tools
-from jai_mcp.db import ensure_schemas
+from steel_mcp import in_process_tools
+from steel_mcp.db import ensure_schemas
 
 TENANT = "TEN-0001"
 CM = "category_manager"

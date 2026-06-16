@@ -13,14 +13,14 @@ import json
 import sys
 from pathlib import Path
 
-from jai_blackbox import BlackBox
-from jai_cortex import Cortex  # assembler-tier glue, like the demos
-from jai_dyno.harness import run_suite
-from jai_dyno.suite import Case, load_suite
-from jai_engine.compile import GuardrailViolation, compile_manifest
-from jai_gateway import GatewayClient
-from jai_manifest import Actor, RunContext, load_manifest
-from jai_meter import Meter
+from steel_blackbox import BlackBox
+from steel_cortex import Cortex  # assembler-tier glue, like the demos
+from steel_dyno.harness import run_suite
+from steel_dyno.suite import Case, load_suite
+from steel_engine.compile import GuardrailViolation, compile_manifest
+from steel_gateway import GatewayClient
+from steel_manifest import Actor, RunContext, load_manifest
+from steel_meter import Meter
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENT_DIR = ROOT / "parts" / "agents" / "supplier_intel"

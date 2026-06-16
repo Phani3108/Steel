@@ -1,4 +1,4 @@
-api_version: jai/v1
+api_version: steel/v1
 name: agent-echo
 description: echoes the user input back, prefixed
 autonomy_level: 2

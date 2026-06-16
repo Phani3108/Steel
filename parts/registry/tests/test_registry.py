@@ -1,4 +1,4 @@
-"""Tests for jai_registry — require Postgres, skip cleanly when it is unavailable."""
+"""Tests for steel_registry — require Postgres, skip cleanly when it is unavailable."""
 
 from __future__ import annotations
 
@@ -7,10 +7,10 @@ from pathlib import Path
 
 import psycopg
 import pytest
-from jai_manifest import AgentManifest, AutonomyLevel, Mandate, PromptRef
-from jai_registry import AgentRecord, Registry
+from steel_manifest import AgentManifest, AutonomyLevel, Mandate, PromptRef
+from steel_registry import AgentRecord, Registry
 
-POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _AGENTS_DIR = _REPO_ROOT / "parts" / "agents"

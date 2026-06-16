@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 from engine_fakes import FakeBlackBox, FakeGateway, FakeMeter
-from jai_engine import compile_manifest
-from jai_manifest import AgentManifest, RunContext
+from steel_engine import compile_manifest
+from steel_manifest import AgentManifest, RunContext
 
 
 def test_run_with_thread_id_resumes(
@@ -31,13 +31,13 @@ def test_run_with_thread_id_resumes(
     thread_id = f"t-{uuid.uuid4().hex[:8]}"
     config = {"configurable": {"thread_id": thread_id}}
     try:
-        first = agent.run(ctx, "Hello, JAI.", thread_id=thread_id)
+        first = agent.run(ctx, "Hello, STEEL.", thread_id=thread_id)
         snapshot = agent.graph.get_state(config)
         assert snapshot.values["output"] == first.text  # checkpoint survived the run
 
-        second = agent.run(ctx, "Hello again, JAI.", thread_id=thread_id)
+        second = agent.run(ctx, "Hello again, STEEL.", thread_id=thread_id)
         assert second.text == first.text  # fake gateway is constant; the run completed
         resumed = agent.graph.get_state(config)
-        assert resumed.values["input"] == "Hello again, JAI."
+        assert resumed.values["input"] == "Hello again, STEEL."
     finally:
         agent.close()

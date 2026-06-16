@@ -15,7 +15,7 @@ const SPECIALISTS = [
 /**
  * Idle hero — a bespoke SVG of the orchestrator fanning out to its specialists,
  * with a packet of light traveling each spoke on a loop. Shown when no mission
- * is running, so the empty state still tells the JAI-Orchestrator story.
+ * is running, so the empty state still tells the STEEL-Orchestrator story.
  */
 export function FanoutDiagram() {
   const W = 520;

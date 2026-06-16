@@ -1,7 +1,7 @@
 {
   "$defs": {
     "AutonomyLevel": {
-      "description": "How much the agent may do without a human. Promotion between levels is gated by\njai-dyno scorecards \u2014 an agent is promoted when it proves itself, never by edit.",
+      "description": "How much the agent may do without a human. Promotion between levels is gated by\nsteel-dyno scorecards \u2014 an agent is promoted when it proves itself, never by edit.",
       "enum": [
         1,
         2,
@@ -36,7 +36,7 @@
       "type": "object"
     },
     "HITLGate": {
-      "description": "A named checkpoint where the run pauses for human approval (jai-brakes).",
+      "description": "A named checkpoint where the run pauses for human approval (steel-brakes).",
       "properties": {
         "approver_roles": {
           "items": {
@@ -62,7 +62,7 @@
       "type": "object"
     },
     "Mandate": {
-      "description": "Hard limits the agent cannot exceed regardless of reasoning (negotiator pattern:\nbounded delegation). Violations are blocked by jai-governor and audited, not retried.",
+      "description": "Hard limits the agent cannot exceed regardless of reasoning (negotiator pattern:\nbounded delegation). Violations are blocked by steel-governor and audited, not retried.",
       "properties": {
         "max_rounds": {
           "anyOf": [
@@ -237,8 +237,8 @@
       "title": "A2A Card"
     },
     "api_version": {
-      "const": "jai/v1",
-      "default": "jai/v1",
+      "const": "steel/v1",
+      "default": "steel/v1",
       "title": "Api Version",
       "type": "string"
     },

@@ -1,4 +1,4 @@
-"""jai-blackbox standalone demo: append, verify, tamper, catch, restore.
+"""steel-blackbox standalone demo: append, verify, tamper, catch, restore.
 
 Requires the Postgres from docker compose (`docker compose up -d postgres`):
     python parts/blackbox/demo/demo.py
@@ -9,8 +9,8 @@ from __future__ import annotations
 import sys
 
 import psycopg
-from jai_blackbox import BlackBox
-from jai_manifest import AuditEvent
+from steel_blackbox import BlackBox
+from steel_manifest import AuditEvent
 
 
 def main() -> int:

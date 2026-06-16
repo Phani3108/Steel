@@ -162,7 +162,7 @@ export default function TelemetryPage() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        kicker="jai-meter · diagnostics"
+        kicker="steel-meter · diagnostics"
         title="Telemetry"
         subtitle="The meter — real calls and tokens counted on every model invocation, sampled every 3 seconds. Cost is modeled from real per-model rates × those real tokens (no live API spend)."
         action={

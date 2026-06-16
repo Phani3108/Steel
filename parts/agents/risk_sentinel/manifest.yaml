@@ -1,4 +1,4 @@
-api_version: jai/v1
+api_version: steel/v1
 name: agent-risk-sentinel
 description: >
   Risk sentinel: scans supplier news and risk signals for a category and returns a concise

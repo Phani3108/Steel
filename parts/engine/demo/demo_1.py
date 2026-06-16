@@ -1,19 +1,19 @@
 """Demo 1 — supplier intelligence: one agent, four personas, permission-aware answers.
 
 Requires docker compose (postgres + the mock gateway); no API keys. The demo wires
-jai-cortex into the engine as the injected retriever — an import that is allowed HERE
-(the demo is assembler-tier glue) but forbidden inside jai_engine itself.
+steel-cortex into the engine as the injected retriever — an import that is allowed HERE
+(the demo is assembler-tier glue) but forbidden inside steel_engine itself.
 """
 
 import json
 from pathlib import Path
 
-from jai_blackbox import BlackBox
-from jai_cortex import Cortex  # assembler-tier import: demos wire parts together
-from jai_engine.compile import compile_manifest
-from jai_gateway import GatewayClient
-from jai_manifest import Actor, RunContext, load_manifest
-from jai_meter import Meter
+from steel_blackbox import BlackBox
+from steel_cortex import Cortex  # assembler-tier import: demos wire parts together
+from steel_engine.compile import compile_manifest
+from steel_gateway import GatewayClient
+from steel_manifest import Actor, RunContext, load_manifest
+from steel_meter import Meter
 
 ROOT = Path(__file__).resolve().parents[3]
 AGENT_DIR = ROOT / "parts" / "agents" / "supplier_intel"

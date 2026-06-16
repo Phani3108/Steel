@@ -13,7 +13,7 @@ single-node platform.
 ## Decision
 
 Use LangGraph's Postgres checkpointer (`engine` schema) for crash-resumable state and
-`interrupt()` for HITL gates (`jai-brakes` owns the approval inbox + resume). The P2 demo
+`interrupt()` for HITL gates (`steel-brakes` owns the approval inbox + resume). The P2 demo
 literally `kill -9`s the worker mid-RFx and resumes from the checkpoint.
 
 **Temporal is recorded as the production answer.** The engine's compile step is the seam:

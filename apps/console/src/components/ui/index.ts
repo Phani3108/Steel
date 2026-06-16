@@ -1,5 +1,5 @@
 /**
- * The JAI cockpit primitive kit — small, theme-driven, composable instruments.
+ * The STEEL cockpit primitive kit — small, theme-driven, composable instruments.
  * Import from "@/components/ui" everywhere. Phase-2 pages build only from these.
  */
 

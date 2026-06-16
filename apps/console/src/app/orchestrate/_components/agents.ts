@@ -42,7 +42,7 @@ function prettify(name: string): string {
   return name
     .replace(/^agent-/, "")
     .replace(/^mcp-/, "")
-    .replace(/^jai-/, "")
+    .replace(/^steel-/, "")
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");

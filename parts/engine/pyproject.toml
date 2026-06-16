@@ -1,27 +1,27 @@
 [project]
-name = "jai-engine"
+name = "steel-engine"
 version = "0.1.0"
-description = "jai-engine — the engine: compiles Agent Manifests to a runtime (LangGraph today, swappable by design)"
+description = "steel-engine — the engine: compiles Agent Manifests to a runtime (LangGraph today, swappable by design)"
 requires-python = ">=3.12"
 dependencies = [
-    "jai-manifest",
-    "jai-gateway",
-    "jai-blackbox",
-    "jai-meter",
+    "steel-manifest",
+    "steel-gateway",
+    "steel-blackbox",
+    "steel-meter",
     "langgraph>=1.0",
     "langgraph-checkpoint-postgres>=2.0",
     "psycopg[binary]>=3.2",
 ]
 
 [tool.uv.sources]
-jai-manifest = { workspace = true }
-jai-gateway = { workspace = true }
-jai-blackbox = { workspace = true }
-jai-meter = { workspace = true }
+steel-manifest = { workspace = true }
+steel-gateway = { workspace = true }
+steel-blackbox = { workspace = true }
+steel-meter = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jai_engine"]
+packages = ["src/steel_engine"]

@@ -5,8 +5,8 @@ from __future__ import annotations
 import uuid
 
 import psycopg
-from jai_blackbox import GENESIS_HASH, BlackBox
-from jai_manifest import AuditEvent, canonical_json, sha256_hex
+from steel_blackbox import GENESIS_HASH, BlackBox
+from steel_manifest import AuditEvent, canonical_json, sha256_hex
 
 
 def _event(i: int, run_id: str, tenant_id: str) -> AuditEvent:

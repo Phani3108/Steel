@@ -1,4 +1,4 @@
-"""Tests for jai_meter.ledger — require Postgres, skip cleanly when it is unavailable."""
+"""Tests for steel_meter.ledger — require Postgres, skip cleanly when it is unavailable."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from decimal import Decimal
 
 import psycopg
 import pytest
-from jai_manifest import Actor, RunContext
-from jai_meter import CostRow, Meter
+from steel_manifest import Actor, RunContext
+from steel_meter import CostRow, Meter
 
-POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 
 
 @pytest.fixture

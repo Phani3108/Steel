@@ -1,11 +1,11 @@
-# jai-gateway — LiteLLM proxy configuration
+# steel-gateway — LiteLLM proxy configuration
 #
 # Three model groups. Callers never name a provider model directly; they ask for a
 # group ("reasoning", "fast", "embed") and the gateway routes, falls back, and meters.
 # That indirection is the vendor-leverage story in working code: swapping or
 # split-testing providers is a config edit, not a code change.
 #
-# Keyless mode: with JAI_MOCK=1 the jai-gateway client sends mock_response on every
+# Keyless mode: with STEEL_MOCK=1 the steel-gateway client sends mock_response on every
 # call, so this config works with no provider keys set.
 
 model_list:
@@ -35,7 +35,7 @@ model_list:
       model: gemini/gemini-2.5-flash
       api_key: os.environ/GEMINI_API_KEY
 
-  # ── embed: vector embeddings for jai-cortex ──
+  # ── embed: vector embeddings for steel-cortex ──
   - model_name: embed
     litellm_params:
       model: openai/text-embedding-3-small

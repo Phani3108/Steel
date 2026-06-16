@@ -1,4 +1,4 @@
-"""Standalone jai-meter demo: record a handful of actions across two tenants and two
+"""Standalone steel-meter demo: record a handful of actions across two tenants and two
 agents, then print a small cost report per dimension.
 
 Requires Postgres (from the repo root: docker compose up -d postgres), or point
@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import sys
 
-from jai_manifest import Actor, RunContext
-from jai_meter import Dimension, Meter
+from steel_manifest import Actor, RunContext
+from steel_meter import Dimension, Meter
 
 ACTIONS: list[tuple[str, str, str, str, str, int, int, float]] = [
     # tenant, agent, action, model, model_group, in_tokens, out_tokens, cost_usd

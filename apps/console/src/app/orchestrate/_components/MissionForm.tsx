@@ -148,7 +148,7 @@ export function MissionForm({
               onChange={(e) => setValueIdx(Number(e.target.value))}
               disabled={busy}
               aria-label="estimated value"
-              className="jai-range w-full"
+              className="steel-range w-full"
               style={
                 {
                   "--pct": `${sliderPct}%`,
@@ -299,7 +299,7 @@ function LaunchGlyph() {
 function RangeStyles() {
   return (
     <style>{`
-      .jai-range {
+      .steel-range {
         -webkit-appearance: none;
         appearance: none;
         height: 4px;
@@ -314,8 +314,8 @@ function RangeStyles() {
         outline: none;
         cursor: pointer;
       }
-      .jai-range:disabled { opacity: 0.5; cursor: not-allowed; }
-      .jai-range::-webkit-slider-thumb {
+      .steel-range:disabled { opacity: 0.5; cursor: not-allowed; }
+      .steel-range::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         width: 15px;
@@ -327,8 +327,8 @@ function RangeStyles() {
           0 0 10px -2px var(--fill);
         transition: transform 0.12s ease;
       }
-      .jai-range::-webkit-slider-thumb:hover { transform: scale(1.12); }
-      .jai-range::-moz-range-thumb {
+      .steel-range::-webkit-slider-thumb:hover { transform: scale(1.12); }
+      .steel-range::-moz-range-thumb {
         width: 15px;
         height: 15px;
         border-radius: 999px;

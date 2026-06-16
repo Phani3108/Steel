@@ -1,7 +1,7 @@
 /**
  * Shared types + small presentational helpers for the /approvals (Gates) screen.
  *
- * An "approval" is a durably-paused agent run: jai-brakes parked the run at a
+ * An "approval" is a durably-paused agent run: steel-brakes parked the run at a
  * human-in-the-loop gate and is waiting on a verdict. Deciding here RESUMES the
  * run — that's the wow this screen exists to convey.
  */

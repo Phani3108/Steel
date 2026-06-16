@@ -5,8 +5,8 @@ from types import SimpleNamespace
 
 import pytest
 from engine_fakes import FakeBlackBox, FakeGateway, FakeMeter
-from jai_engine.compile import compile_manifest
-from jai_manifest import Actor, RunContext, load_manifest
+from steel_engine.compile import compile_manifest
+from steel_manifest import Actor, RunContext, load_manifest
 
 AGENT_DIR = Path(__file__).resolve().parents[2] / "agents" / "supplier_intel"
 
@@ -46,7 +46,7 @@ def _fake_retrieval(*, refused: bool = False):
 
 
 def _compile(retriever, monkeypatch):
-    monkeypatch.setenv("JAI_MOCK", "1")
+    monkeypatch.setenv("STEEL_MOCK", "1")
     monkeypatch.setenv("POSTGRES_URL", "postgresql://nobody:n@127.0.0.1:1/none")  # no checkpointer
     blackbox = FakeBlackBox()
     agent = compile_manifest(
@@ -80,7 +80,7 @@ def test_rag_refusal_path(monkeypatch):
 
 
 def test_rag_requires_retriever(monkeypatch):
-    monkeypatch.setenv("JAI_MOCK", "1")
+    monkeypatch.setenv("STEEL_MOCK", "1")
     with pytest.raises(ValueError, match="retriever"):
         compile_manifest(
             load_manifest(AGENT_DIR / "manifest.yaml"),

@@ -1,5 +1,5 @@
 import pytest
-from jai_manifest import (
+from steel_manifest import (
     AgentManifest,
     AuditEvent,
     AutonomyLevel,

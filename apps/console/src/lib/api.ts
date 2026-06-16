@@ -1,17 +1,17 @@
 /**
- * Tiny typed fetch helpers for the JAI control-plane API.
+ * Tiny typed fetch helpers for the STEEL control-plane API.
  *
- * Base URL comes from NEXT_PUBLIC_JAI_API_URL (default http://localhost:8400).
+ * Base URL comes from NEXT_PUBLIC_STEEL_API_URL (default http://localhost:8400).
  * All helpers throw on network/HTTP failure; pages catch and show the
  * "control plane offline" banner while keeping the last known state.
  */
 
 export const API_BASE =
-  process.env.NEXT_PUBLIC_JAI_API_URL ?? "http://localhost:8400";
+  process.env.NEXT_PUBLIC_STEEL_API_URL ?? "http://localhost:8400";
 
 export type CostDimension = "agent" | "tenant_id";
 
-/** One aggregated line of GET /costs (mirrors jai-meter's CostRow). */
+/** One aggregated line of GET /costs (mirrors steel-meter's CostRow). */
 export interface CostRow {
   key: string;
   calls?: number;
@@ -35,7 +35,7 @@ export interface RunSummary {
 
 export type Outcome = "ok" | "denied" | "error" | "escalated" | "pending_approval";
 
-/** One audit event from GET /runs/{id}/events (mirrors jai_manifest.AuditEvent). */
+/** One audit event from GET /runs/{id}/events (mirrors steel_manifest.AuditEvent). */
 export interface AuditEvent {
   seq?: number;
   event_id: string;
@@ -134,7 +134,7 @@ export async function fetchMeta(): Promise<Meta> {
   return await getJSON<Meta>("/meta");
 }
 
-/** One citation on a chat answer (mirrors jai-cortex's Citation). */
+/** One citation on a chat answer (mirrors steel-cortex's Citation). */
 export interface ChatCitation {
   source_type: string;
   source_id: string;
@@ -180,7 +180,7 @@ export async function fetchHealth(): Promise<Health> {
   return await getJSON<Health>("/health");
 }
 
-/** One agent's scorecard (mirrors jai-dyno's scorecard shape). */
+/** One agent's scorecard (mirrors steel-dyno's scorecard shape). */
 export interface Scorecard {
   suite: string;
   pass_rate: number;

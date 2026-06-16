@@ -3,9 +3,9 @@ from pathlib import Path
 
 import psycopg
 import pytest
-from jai_cortex import Cortex
+from steel_cortex import Cortex
 
-POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 SEED_DIR = Path(__file__).resolve().parents[3] / "data" / "seed"
 
 

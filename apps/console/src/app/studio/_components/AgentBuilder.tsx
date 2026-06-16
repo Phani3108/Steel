@@ -38,7 +38,7 @@ interface CheckResult {
 /**
  * SECTION 1 — "Build an agent".
  *
- * A form whose every keystroke re-derives a real, schema-valid jai/v1
+ * A form whose every keystroke re-derives a real, schema-valid steel/v1
  * AgentManifest in the live preview pane, debounce-validated against
  * POST /manifest/validate. The point: the studio is a design-time author for
  * the SAME manifest the platform compiles — not a toy no-code runtime.
@@ -102,8 +102,8 @@ export function AgentBuilder() {
       <p className="mb-4 max-w-2xl text-[12px] leading-relaxed text-ink-faint">
         The studio is design-time, not a no-code runtime. Every field below
         composes a real{" "}
-        <span className="metric text-ink-muted">jai/v1</span> AgentManifest —
-        the exact schema jai-engine compiles into a runnable agent.
+        <span className="metric text-ink-muted">steel/v1</span> AgentManifest —
+        the exact schema steel-engine compiles into a runnable agent.
       </p>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 from engine_fakes import FakeBlackBox, FakeGateway, FakeMeter
-from jai_engine import CompiledAgent, GuardrailViolation, compile_manifest
-from jai_gateway import BudgetExceededError
-from jai_manifest import AgentManifest, RunContext, sha256_hex
+from steel_engine import CompiledAgent, GuardrailViolation, compile_manifest
+from steel_gateway import BudgetExceededError
+from steel_manifest import AgentManifest, RunContext, sha256_hex
 
 
 @pytest.fixture
@@ -37,16 +37,16 @@ def test_happy_path_runresult_and_audit_order(
     fake_blackbox: FakeBlackBox,
     fake_meter: FakeMeter,
 ) -> None:
-    result = agent.run(ctx, "Hello, JAI.")
+    result = agent.run(ctx, "Hello, STEEL.")
 
-    assert result.text == "ECHO: Hello, JAI."
+    assert result.text == "ECHO: Hello, STEEL."
     assert result.run_id == ctx.run_id
     assert result.cost_usd == pytest.approx(0.001)
 
     assert fake_blackbox.actions() == ["run.start", "model.call", "run.end"]
     assert [e.outcome for e in fake_blackbox.events] == ["ok", "ok", "ok"]
     model_call = fake_blackbox.events[1]
-    assert model_call.input_sha256 == sha256_hex("Hello, JAI.")
+    assert model_call.input_sha256 == sha256_hex("Hello, STEEL.")
     assert model_call.agent == "agent-echo"
     assert model_call.run_id == ctx.run_id
 
@@ -56,7 +56,7 @@ def test_happy_path_runresult_and_audit_order(
     assert call["max_tokens"] == 256
     assert call["messages"][0]["role"] == "system"
     assert 'prefixed with "ECHO: "' in call["messages"][0]["content"]
-    assert call["messages"][1] == {"role": "user", "content": "Hello, JAI."}
+    assert call["messages"][1] == {"role": "user", "content": "Hello, STEEL."}
     assert call["ctx"].agent == "agent-echo"
     # run() seeds the budget pool from the manifest when the caller set none.
     assert call["ctx"].budget_usd_remaining == pytest.approx(0.05)
@@ -90,7 +90,7 @@ def test_budget_exceeded_propagates(
     broke = ctx.model_copy(update={"budget_usd_remaining": 0.0})
 
     with pytest.raises(BudgetExceededError):
-        agent.run(broke, "Hello, JAI.")
+        agent.run(broke, "Hello, STEEL.")
 
     assert fake_blackbox.events[-1].action == "run.end"
     assert fake_blackbox.events[-1].outcome == "error"
@@ -106,7 +106,7 @@ def test_guard_out_rejects_empty_output(
     fake_gateway.reply = "   "
 
     with pytest.raises(GuardrailViolation):
-        agent.run(ctx, "Hello, JAI.")
+        agent.run(ctx, "Hello, STEEL.")
 
     assert "guardrail.output" in fake_blackbox.actions()
     assert fake_blackbox.events[-1].outcome == "error"

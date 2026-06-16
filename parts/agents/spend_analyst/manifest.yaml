@@ -1,4 +1,4 @@
-api_version: jai/v1
+api_version: steel/v1
 name: agent-spend-analyst
 description: >
   Spend analyst: pulls the spend cube and price benchmarks for a category and returns a

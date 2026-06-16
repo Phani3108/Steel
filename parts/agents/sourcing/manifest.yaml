@@ -1,7 +1,7 @@
 # agent-sourcing — runs a sourcing event end-to-end inside hard rails:
 # governor policy checks before every irreversible step, two human gates,
 # a bounded mandate, and the kill switch at every node boundary.
-api_version: jai/v1
+api_version: steel/v1
 name: agent-sourcing
 description: >
   Autonomous sourcing: intake → RFx draft → human publish gate → bid collection →

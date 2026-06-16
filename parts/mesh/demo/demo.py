@@ -1,4 +1,4 @@
-"""Standalone jai-mesh demo: register two toy agents on the CAN bus, dispatch each from a
+"""Standalone steel-mesh demo: register two toy agents on the CAN bus, dispatch each from a
 root run context, and print the results, the recorded hops, one A2A agent-card JSON, and
 the network topology.
 
@@ -12,8 +12,8 @@ from __future__ import annotations
 import json
 import sys
 
-from jai_manifest import Actor, RunContext
-from jai_mesh import AgentCard, Hop, Mesh, Skill
+from steel_manifest import Actor, RunContext
+from steel_mesh import AgentCard, Hop, Mesh, Skill
 
 
 def greeter_handler(ctx: RunContext, input: dict) -> dict:

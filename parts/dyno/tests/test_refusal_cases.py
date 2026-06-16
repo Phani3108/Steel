@@ -1,7 +1,7 @@
 """Refusal-contract and case-aware-target grading."""
 
-from jai_dyno.harness import run_suite
-from jai_dyno.suite import Case, Suite
+from steel_dyno.harness import run_suite
+from steel_dyno.suite import Case, Suite
 
 
 def _suite(cases: list[Case]) -> Suite:

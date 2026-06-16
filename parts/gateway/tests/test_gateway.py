@@ -5,10 +5,10 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from jai_gateway import BudgetExceededError, GatewayClient
-from jai_gateway.client import MOCK_EMBED_DIM
-from jai_gateway.pricing import modeled_cost
-from jai_manifest import RunContext
+from steel_gateway import BudgetExceededError, GatewayClient
+from steel_gateway.client import MOCK_EMBED_DIM
+from steel_gateway.pricing import modeled_cost
+from steel_manifest import RunContext
 
 
 def make_ctx(budget: float | None = None) -> RunContext:

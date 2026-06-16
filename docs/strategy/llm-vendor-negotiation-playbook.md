@@ -13,7 +13,7 @@ credible ability to move traffic is worth more than any volume argument.
 ## Leverage, ranked
 
 1. **Live competitive proposals.** Run a real bake-off with published eval results
-   (jai-dyno-style scorecards on your own workloads). Vendors discount hardest against a
+   (steel-dyno-style scorecards on your own workloads). Vendors discount hardest against a
    competitor who has already passed your evals.
 2. **Routing + caching beat discounts.** Model-mix routing (fast tier for bulk work,
    reasoning tier only where it pays) plus prompt caching typically cuts spend **40–70%**
@@ -38,7 +38,7 @@ credible ability to move traffic is worth more than any volume argument.
 | No-regression | Right to re-run your eval baseline on replacement models; exit or credit if it regresses | Capability is what you bought |
 | Rate limits | Contractual RPM/TPM floors with burst terms, not "fair use" | Agents fail loudly at rate-limit cliffs |
 | Price protection | Cap on per-token increases during the term; pass-through of list-price cuts | List prices have only fallen — capture that |
-| Audit rights | Usage/billing data export at line-item granularity | Reconcile against your own meter (jai-meter pattern) |
+| Audit rights | Usage/billing data export at line-item granularity | Reconcile against your own meter (steel-meter pattern) |
 | Output IP | Full assignment of output rights to you/your customers | Table stakes, but verify for fine-tuned variants |
 | Liability/indemnity | IP indemnity for outputs; clarity on AI-Act-relevant obligations | EU AI Act transparency duties apply from Aug 2026 |
 

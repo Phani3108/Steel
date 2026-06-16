@@ -6,9 +6,9 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
-from jai_dyno.harness import run_suite
-from jai_dyno.suite import Case, Suite
-from jai_manifest import Actor, RunContext
+from steel_dyno.harness import run_suite
+from steel_dyno.suite import Case, Suite
+from steel_manifest import Actor, RunContext
 
 
 def make_suite(*cases: Case) -> Suite:

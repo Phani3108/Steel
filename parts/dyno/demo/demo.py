@@ -1,4 +1,4 @@
-"""jai-dyno standalone demo — no services required.
+"""steel-dyno standalone demo — no services required.
 
 Runs the repo smoke suite (exact + contains graders) against the built-in echo target,
 prints the scorecard, then shows the promotion gate on two sample manifests: one that
@@ -12,8 +12,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from jai_dyno import load_suite, promotion_gate, run_suite
-from jai_manifest import AgentManifest, AutonomyLevel, PromptRef
+from steel_dyno import load_suite, promotion_gate, run_suite
+from steel_manifest import AgentManifest, AutonomyLevel, PromptRef
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SMOKE_SUITE = REPO_ROOT / "evals" / "suite0_smoke" / "smoke.yaml"
@@ -33,7 +33,7 @@ def sample_manifest(level: AutonomyLevel) -> AgentManifest:
 
 
 def main() -> None:
-    print(f"== jai-dyno demo: running {SMOKE_SUITE.relative_to(REPO_ROOT)} against echo ==\n")
+    print(f"== steel-dyno demo: running {SMOKE_SUITE.relative_to(REPO_ROOT)} against echo ==\n")
     suite = load_suite(SMOKE_SUITE)
     scorecard = run_suite(suite, echo, agent_name="agent-supplier-scout")
     print(json.dumps(scorecard.model_dump(mode="json"), indent=2))

@@ -1,22 +1,22 @@
-# jai-console
+# steel-console
 
-**SYSTEM: COCKPIT** — the human interface of the JAI platform.
+**SYSTEM: COCKPIT** — the human interface of the STEEL platform.
 
 One-line purpose: the cockpit shell — a Next.js app showing platform state: the parts
 catalog, costs, and run audit trails, read live from the control-plane API.
 
 ## Standalone use case
 
-jai-console is a generic **agent-operations dashboard**. Any system that exposes three
-plain HTTP endpoints can use it as-is, with zero JAI code:
+steel-console is a generic **agent-operations dashboard**. Any system that exposes three
+plain HTTP endpoints can use it as-is, with zero STEEL code:
 
 - `GET /costs?by=<dimension>` → `[{key, calls, input_tokens, output_tokens, cost_usd}]`
 - `GET /runs` → `[{run_id, ...}]`
 - `GET /runs/{id}/events` → `[{event_id, ts, action, outcome, actor_id, actor_role, agent, detail, ...}]`
 
-Point `NEXT_PUBLIC_JAI_API_URL` at your API and you get a live cost dashboard and a
+Point `NEXT_PUBLIC_STEEL_API_URL` at your API and you get a live cost dashboard and a
 clickable audit timeline for every run — useful for any agent platform that records
-spend and audit events, not just JAI.
+spend and audit events, not just STEEL.
 
 ## Pages
 
@@ -48,7 +48,7 @@ pnpm build && pnpm start
 
 | Env var | Default | Meaning |
 |---|---|---|
-| `NEXT_PUBLIC_JAI_API_URL` | `http://localhost:8400` | Base URL of the control-plane API |
+| `NEXT_PUBLIC_STEEL_API_URL` | `http://localhost:8400` | Base URL of the control-plane API |
 
 The console fetches from the **browser**, so the control plane must allow CORS from the
 console's origin (e.g. `http://localhost:3000`).
@@ -56,7 +56,7 @@ console's origin (e.g. `http://localhost:3000`).
 ## Demo
 
 1. Start the platform services and the control plane (`docker compose up -d` and the
-   `jai-api` app on port 8400) from the repo root.
+   `steel-api` app on port 8400) from the repo root.
 2. `pnpm dev` here, then open `http://localhost:3000`.
 3. With the API down, the pages still render — banner up, catalog intact. Start the API
    and the costs/runs pages go live within 2 seconds.

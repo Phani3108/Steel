@@ -4,21 +4,21 @@ requires-python = ">=3.12"
 
 [manifest]
 members = [
-    "jai",
-    "jai-api",
-    "jai-blackbox",
-    "jai-brakes",
-    "jai-cortex",
-    "jai-dyno",
-    "jai-engine",
-    "jai-foundry",
-    "jai-gateway",
-    "jai-governor",
-    "jai-manifest",
-    "jai-mcp",
-    "jai-mesh",
-    "jai-meter",
-    "jai-registry",
+    "steel",
+    "steel-api",
+    "steel-blackbox",
+    "steel-brakes",
+    "steel-cortex",
+    "steel-dyno",
+    "steel-engine",
+    "steel-foundry",
+    "steel-gateway",
+    "steel-governor",
+    "steel-manifest",
+    "steel-mcp",
+    "steel-mesh",
+    "steel-meter",
+    "steel-registry",
 ]
 
 [[package]]
@@ -448,7 +448,7 @@ wheels = [
 ]
 
 [[package]]
-name = "jai"
+name = "steel"
 version = "0.1.0"
 source = { virtual = "." }
 
@@ -469,22 +469,22 @@ dev = [
 ]
 
 [[package]]
-name = "jai-api"
+name = "steel-api"
 version = "0.1.0"
 source = { editable = "apps/api" }
 dependencies = [
     { name = "fastapi" },
-    { name = "jai-blackbox" },
-    { name = "jai-brakes" },
-    { name = "jai-cortex" },
-    { name = "jai-engine" },
-    { name = "jai-gateway" },
-    { name = "jai-governor" },
-    { name = "jai-manifest" },
-    { name = "jai-mcp" },
-    { name = "jai-mesh" },
-    { name = "jai-meter" },
-    { name = "jai-registry" },
+    { name = "steel-blackbox" },
+    { name = "steel-brakes" },
+    { name = "steel-cortex" },
+    { name = "steel-engine" },
+    { name = "steel-gateway" },
+    { name = "steel-governor" },
+    { name = "steel-manifest" },
+    { name = "steel-mcp" },
+    { name = "steel-mesh" },
+    { name = "steel-meter" },
+    { name = "steel-registry" },
     { name = "psycopg", extra = ["binary"] },
     { name = "uvicorn" },
 ]
@@ -492,96 +492,96 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
-    { name = "jai-blackbox", editable = "parts/blackbox" },
-    { name = "jai-brakes", editable = "parts/brakes" },
-    { name = "jai-cortex", editable = "parts/cortex" },
-    { name = "jai-engine", editable = "parts/engine" },
-    { name = "jai-gateway", editable = "parts/gateway" },
-    { name = "jai-governor", editable = "parts/governor" },
-    { name = "jai-manifest", editable = "parts/manifest" },
-    { name = "jai-mcp", editable = "parts/mcp" },
-    { name = "jai-mesh", editable = "parts/mesh" },
-    { name = "jai-meter", editable = "parts/meter" },
-    { name = "jai-registry", editable = "parts/registry" },
+    { name = "steel-blackbox", editable = "parts/blackbox" },
+    { name = "steel-brakes", editable = "parts/brakes" },
+    { name = "steel-cortex", editable = "parts/cortex" },
+    { name = "steel-engine", editable = "parts/engine" },
+    { name = "steel-gateway", editable = "parts/gateway" },
+    { name = "steel-governor", editable = "parts/governor" },
+    { name = "steel-manifest", editable = "parts/manifest" },
+    { name = "steel-mcp", editable = "parts/mcp" },
+    { name = "steel-mesh", editable = "parts/mesh" },
+    { name = "steel-meter", editable = "parts/meter" },
+    { name = "steel-registry", editable = "parts/registry" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "uvicorn", specifier = ">=0.32" },
 ]
 
 [[package]]
-name = "jai-blackbox"
+name = "steel-blackbox"
 version = "0.1.0"
 source = { editable = "parts/blackbox" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
 ]
 
 [[package]]
-name = "jai-brakes"
+name = "steel-brakes"
 version = "0.1.0"
 source = { editable = "parts/brakes" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
 ]
 
 [[package]]
-name = "jai-cortex"
+name = "steel-cortex"
 version = "0.1.0"
 source = { editable = "parts/cortex" }
 dependencies = [
-    { name = "jai-gateway" },
-    { name = "jai-manifest" },
+    { name = "steel-gateway" },
+    { name = "steel-manifest" },
     { name = "pgvector" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-gateway", editable = "parts/gateway" },
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-gateway", editable = "parts/gateway" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "pgvector", specifier = ">=0.3" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
 ]
 
 [[package]]
-name = "jai-dyno"
+name = "steel-dyno"
 version = "0.1.0"
 source = { editable = "parts/dyno" }
 dependencies = [
-    { name = "jai-gateway" },
-    { name = "jai-manifest" },
+    { name = "steel-gateway" },
+    { name = "steel-manifest" },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-gateway", editable = "parts/gateway" },
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-gateway", editable = "parts/gateway" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "pyyaml", specifier = ">=6" },
 ]
 
 [[package]]
-name = "jai-engine"
+name = "steel-engine"
 version = "0.1.0"
 source = { editable = "parts/engine" }
 dependencies = [
-    { name = "jai-blackbox" },
-    { name = "jai-gateway" },
-    { name = "jai-manifest" },
-    { name = "jai-meter" },
+    { name = "steel-blackbox" },
+    { name = "steel-gateway" },
+    { name = "steel-manifest" },
+    { name = "steel-meter" },
     { name = "langgraph" },
     { name = "langgraph-checkpoint-postgres" },
     { name = "psycopg", extra = ["binary"] },
@@ -589,66 +589,66 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-blackbox", editable = "parts/blackbox" },
-    { name = "jai-gateway", editable = "parts/gateway" },
-    { name = "jai-manifest", editable = "parts/manifest" },
-    { name = "jai-meter", editable = "parts/meter" },
+    { name = "steel-blackbox", editable = "parts/blackbox" },
+    { name = "steel-gateway", editable = "parts/gateway" },
+    { name = "steel-manifest", editable = "parts/manifest" },
+    { name = "steel-meter", editable = "parts/meter" },
     { name = "langgraph", specifier = ">=1.0" },
     { name = "langgraph-checkpoint-postgres", specifier = ">=2.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
 ]
 
 [[package]]
-name = "jai-foundry"
+name = "steel-foundry"
 version = "0.1.0"
 source = { editable = "parts/foundry" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "pyyaml", specifier = ">=6" },
 ]
 
 [[package]]
-name = "jai-gateway"
+name = "steel-gateway"
 version = "0.1.0"
 source = { editable = "parts/gateway" }
 dependencies = [
     { name = "httpx" },
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "openai" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.27" },
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "openai", specifier = ">=1.60" },
 ]
 
 [[package]]
-name = "jai-governor"
+name = "steel-governor"
 version = "0.1.0"
 source = { editable = "parts/governor" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "pyyaml", specifier = ">=6" },
 ]
 
 [[package]]
-name = "jai-manifest"
+name = "steel-manifest"
 version = "0.1.0"
 source = { editable = "parts/manifest" }
 dependencies = [
@@ -663,65 +663,65 @@ requires-dist = [
 ]
 
 [[package]]
-name = "jai-mcp"
+name = "steel-mcp"
 version = "0.1.0"
 source = { editable = "parts/mcp" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "mcp" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "mcp", specifier = ">=1.2" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
 ]
 
 [[package]]
-name = "jai-mesh"
+name = "steel-mesh"
 version = "0.1.0"
 source = { editable = "parts/mesh" }
 dependencies = [
     { name = "httpx" },
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.27" },
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
 ]
 
 [[package]]
-name = "jai-meter"
+name = "steel-meter"
 version = "0.1.0"
 source = { editable = "parts/meter" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "psycopg", extra = ["binary"] },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
 ]
 
 [[package]]
-name = "jai-registry"
+name = "steel-registry"
 version = "0.1.0"
 source = { editable = "parts/registry" }
 dependencies = [
-    { name = "jai-manifest" },
+    { name = "steel-manifest" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "jai-manifest", editable = "parts/manifest" },
+    { name = "steel-manifest", editable = "parts/manifest" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "pyyaml", specifier = ">=6" },
 ]

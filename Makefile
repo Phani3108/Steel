@@ -20,8 +20,8 @@ sync: ## Install/refresh all Python workspace packages
 	uv sync --all-packages --dev
 
 seed: ## Generate + load the Borealis Manufacturing dataset
-	uv run jai-foundry generate --out data/seed
-	uv run jai-foundry load --from data/seed
+	uv run steel-foundry generate --out data/seed
+	uv run steel-foundry load --from data/seed
 
 smoke: ## Demo 0: echo agent runs from manifest through gateway; audit + ledger written
 	uv run python parts/engine/demo/demo_0.py
@@ -52,14 +52,14 @@ portability: ## Prove the manifest is the contract: suite 1 on the miniloop runt
 maturity: ## Print the eval-gated autonomy promotion ladder
 	uv run python evals/run_maturity.py
 
-schemas: ## Export JSON Schemas from jai-manifest pydantic models
-	uv run jai-manifest export-schemas --out schemas/
+schemas: ## Export JSON Schemas from steel-manifest pydantic models
+	uv run steel-manifest export-schemas --out schemas/
 
 demo-part-%: ## Run a part's standalone demo, e.g. make demo-part-blackbox
 	uv run python parts/$*/demo/demo.py
 
 api: ## Run the control plane on :8400
-	uv run uvicorn --factory jai_api.main:create_app --port 8400
+	uv run uvicorn --factory steel_api.main:create_app --port 8400
 
 console: ## Run the console on :3000 (needs `make api` in another shell)
 	pnpm --dir apps/console dev

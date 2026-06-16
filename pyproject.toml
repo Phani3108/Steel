@@ -1,7 +1,7 @@
 [project]
-name = "jai"
+name = "steel"
 version = "0.1.0"
-description = "JAI — modular agentic platform for procurement (workspace root)"
+description = "STEEL — modular agentic platform for procurement (workspace root)"
 requires-python = ">=3.12"
 
 [tool.uv.workspace]
@@ -41,100 +41,100 @@ testpaths = ["parts", "apps"]
 addopts = "-q"
 
 # ── Rippability rule, enforced ────────────────────────────────────────────────
-# Parts communicate only through published contracts. jai_manifest is the shared
+# Parts communicate only through published contracts. steel_manifest is the shared
 # contract package; everything may import it, it imports no other part. The
-# leaf parts are mutually independent. jai_engine is the assembler: it may use
+# leaf parts are mutually independent. steel_engine is the assembler: it may use
 # other parts' PUBLIC APIs, never their _internal modules.
 [tool.importlinter]
 root_packages = [
-    "jai_manifest",
-    "jai_gateway",
-    "jai_blackbox",
-    "jai_meter",
-    "jai_foundry",
-    "jai_dyno",
-    "jai_engine",
-    "jai_cortex",
-    "jai_governor",
-    "jai_brakes",
-    "jai_mcp",
-    "jai_registry",
-    "jai_mesh",
+    "steel_manifest",
+    "steel_gateway",
+    "steel_blackbox",
+    "steel_meter",
+    "steel_foundry",
+    "steel_dyno",
+    "steel_engine",
+    "steel_cortex",
+    "steel_governor",
+    "steel_brakes",
+    "steel_mcp",
+    "steel_registry",
+    "steel_mesh",
 ]
 
 [[tool.importlinter.contracts]]
-name = "jai_manifest is the contract layer and imports no other part"
+name = "steel_manifest is the contract layer and imports no other part"
 type = "forbidden"
-source_modules = ["jai_manifest"]
+source_modules = ["steel_manifest"]
 forbidden_modules = [
-    "jai_gateway",
-    "jai_blackbox",
-    "jai_meter",
-    "jai_foundry",
-    "jai_dyno",
-    "jai_engine",
-    "jai_cortex",
-    "jai_governor",
-    "jai_brakes",
-    "jai_mcp",
-    "jai_registry",
-    "jai_mesh",
+    "steel_gateway",
+    "steel_blackbox",
+    "steel_meter",
+    "steel_foundry",
+    "steel_dyno",
+    "steel_engine",
+    "steel_cortex",
+    "steel_governor",
+    "steel_brakes",
+    "steel_mcp",
+    "steel_registry",
+    "steel_mesh",
 ]
 
 [[tool.importlinter.contracts]]
 name = "leaf parts are mutually independent"
 type = "independence"
 modules = [
-    "jai_gateway",
-    "jai_blackbox",
-    "jai_meter",
-    "jai_foundry",
+    "steel_gateway",
+    "steel_blackbox",
+    "steel_meter",
+    "steel_foundry",
 ]
 
 [[tool.importlinter.contracts]]
 name = "no part reaches into another part's internals"
 type = "forbidden"
 source_modules = [
-    "jai_gateway",
-    "jai_blackbox",
-    "jai_meter",
-    "jai_foundry",
-    "jai_dyno",
-    "jai_engine",
-    "jai_cortex",
-    "jai_governor",
-    "jai_brakes",
-    "jai_mcp",
-    "jai_registry",
-    "jai_mesh",
+    "steel_gateway",
+    "steel_blackbox",
+    "steel_meter",
+    "steel_foundry",
+    "steel_dyno",
+    "steel_engine",
+    "steel_cortex",
+    "steel_governor",
+    "steel_brakes",
+    "steel_mcp",
+    "steel_registry",
+    "steel_mesh",
 ]
 forbidden_modules = [
-    "jai_gateway._internal",
-    "jai_blackbox._internal",
-    "jai_meter._internal",
-    "jai_foundry._internal",
-    "jai_dyno._internal",
-    "jai_engine._internal",
-    "jai_cortex._internal",
-    "jai_governor._internal",
-    "jai_brakes._internal",
-    "jai_mcp._internal",
-    "jai_registry._internal",
-    "jai_mesh._internal",
+    "steel_gateway._internal",
+    "steel_blackbox._internal",
+    "steel_meter._internal",
+    "steel_foundry._internal",
+    "steel_dyno._internal",
+    "steel_engine._internal",
+    "steel_cortex._internal",
+    "steel_governor._internal",
+    "steel_brakes._internal",
+    "steel_mcp._internal",
+    "steel_registry._internal",
+    "steel_mesh._internal",
 ]
 ignore_imports = [
-    "jai_gateway.* -> jai_gateway._internal",
-    "jai_blackbox.* -> jai_blackbox._internal",
-    "jai_meter.* -> jai_meter._internal",
-    "jai_foundry.* -> jai_foundry._internal",
-    "jai_dyno.* -> jai_dyno._internal",
-    "jai_engine.* -> jai_engine._internal",
-    "jai_cortex.* -> jai_cortex._internal",
-    "jai_governor.* -> jai_governor._internal",
-    "jai_brakes.* -> jai_brakes._internal",
-    "jai_mcp.* -> jai_mcp._internal",
-    "jai_registry.* -> jai_registry._internal",
-    "jai_mesh.* -> jai_mesh._internal",
+    "steel_gateway.* -> steel_gateway._internal",
+    "steel_blackbox.* -> steel_blackbox._internal",
+    "steel_meter.* -> steel_meter._internal",
+    "steel_foundry.* -> steel_foundry._internal",
+    "steel_dyno.* -> steel_dyno._internal",
+    "steel_engine.* -> steel_engine._internal",
+    "steel_cortex.* -> steel_cortex._internal",
+    "steel_governor.* -> steel_governor._internal",
+    "steel_brakes.* -> steel_brakes._internal",
+    "steel_mcp.* -> steel_mcp._internal",
+    "steel_registry.* -> steel_registry._internal",
+    "steel_mesh.* -> steel_mesh._internal",
 ]
 # Parts without an _internal module yet must not fail the contract
 unmatched_ignore_imports_alerting = "none"

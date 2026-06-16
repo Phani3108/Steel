@@ -14,9 +14,9 @@ tightly integrated within the assembly.
 
 One repository, one `docker compose up`, one uv workspace — but every part is:
 
-1. its own Python package (`parts/<name>` → `jai_<name>`) with its own README, demo,
+1. its own Python package (`parts/<name>` → `steel_<name>`) with its own README, demo,
    version, and tests;
-2. boundary-enforced in CI via import-linter: parts may import `jai_manifest` (the
+2. boundary-enforced in CI via import-linter: parts may import `steel_manifest` (the
    contract layer) and their own internals; cross-part calls go through published client
    interfaces, HTTP, MCP, or A2A — never another part's `_internal`;
 3. independently runnable (`make demo-part-<name>`).

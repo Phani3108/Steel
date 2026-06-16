@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from jai_mcp import intake
+from steel_mcp import intake
 
 TENANT = "TEN-TEST"
 

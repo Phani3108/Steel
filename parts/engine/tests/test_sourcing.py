@@ -9,11 +9,11 @@ from types import SimpleNamespace
 import psycopg
 import pytest
 from engine_fakes import FakeBlackBox
-from jai_engine.sourcing import compile_sourcing
-from jai_manifest import Actor, RunContext, load_manifest
+from steel_engine.sourcing import compile_sourcing
+from steel_manifest import Actor, RunContext, load_manifest
 
 AGENT_DIR = Path(__file__).resolve().parents[2] / "agents" / "sourcing"
-POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 
 def _pg() -> bool:
     try:

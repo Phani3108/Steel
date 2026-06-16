@@ -1,4 +1,4 @@
-"""Tests for jai_mesh — pure in-process transport, no Postgres, no network.
+"""Tests for steel_mesh — pure in-process transport, no Postgres, no network.
 
 Covers: register/dispatch happy path (output + cost surfaced, Hop emitted with the right
 from/to), child-context propagation (tenant + trace kept, agent swapped), handler
@@ -9,8 +9,8 @@ register raising on a handler-less skill, the A2A agent-card JSON shape, and top
 from __future__ import annotations
 
 import pytest
-from jai_manifest import Actor, RunContext
-from jai_mesh import AgentCard, Hop, Mesh, Skill, TaskResult
+from steel_manifest import Actor, RunContext
+from steel_mesh import AgentCard, Hop, Mesh, Skill, TaskResult
 
 
 def _root(agent: str | None = "agent-orchestrator") -> RunContext:

@@ -1,10 +1,10 @@
-# jai-registry — the fleet roster
+# steel-registry — the fleet roster
 
 **System:** NETWORK · **Standalone use case:** a drop-in catalog for any fleet of agents —
 point it at a Postgres and you have one queryable table holding every agent's card (system,
 description, autonomy level, pipeline, skills), its live status (`active | paused | killed |
 planned`), its bounded mandate, and its latest scorecard headline — plus an append-only log
-of every status change (who, why, when). No JAI runtime required: it ingests framework-free
+of every status change (who, why, when). No STEEL runtime required: it ingests framework-free
 `AgentManifest`s and plain scorecard JSON, so any console or orchestrator can read the whole
 fleet at a glance and any operator can pause or revive an agent with a paper trail.
 
@@ -35,9 +35,9 @@ in `evals/results` and the dyno.
 
 ```python
 from pathlib import Path
-from jai_registry import Registry
+from steel_registry import Registry
 
-reg = Registry()          # uses POSTGRES_URL (default postgresql://jai:jai@localhost:5433/jai)
+reg = Registry()          # uses POSTGRES_URL (default postgresql://steel:steel@localhost:5433/steel)
 reg.ensure_schema()
 
 # Load the whole on-disk fleet + its scorecards in two calls.
@@ -54,12 +54,12 @@ reg.set_status("agent-sourcing", "active", by="u-cpo", reason="freeze lifted")
 
 ## CLI
 
-The `jai-registry` console script wraps the two everyday operations against the built-in
+The `steel-registry` console script wraps the two everyday operations against the built-in
 SYSTEMS map (echo→POWERTRAIN, supplier-intel→CHASSIS, sourcing→DRIVETRAIN, the rest→NETWORK):
 
 ```bash
-jai-registry sync     # load parts/agents/*/manifest.yaml + evals/results/*.json, then print the roster
-jai-registry list     # pretty table of the current roster
+steel-registry sync     # load parts/agents/*/manifest.yaml + evals/results/*.json, then print the roster
+steel-registry list     # pretty table of the current roster
 ```
 
 ## Demo

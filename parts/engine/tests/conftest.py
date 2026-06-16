@@ -10,7 +10,7 @@ from pathlib import Path
 import psycopg
 import pytest
 from engine_fakes import FakeBlackBox, FakeGateway, FakeMeter
-from jai_manifest import Actor, AgentManifest, RunContext, load_manifest
+from steel_manifest import Actor, AgentManifest, RunContext, load_manifest
 
 ECHO_DIR = Path(__file__).resolve().parents[2] / "agents" / "echo"
 
@@ -51,12 +51,12 @@ def ctx() -> RunContext:
 @pytest.fixture
 def no_checkpointer(monkeypatch: pytest.MonkeyPatch) -> None:
     """Force the no-Postgres path so unit tests behave identically with or without docker."""
-    monkeypatch.setattr("jai_engine.compile._postgres_checkpointer", lambda pg_url=None: None)
+    monkeypatch.setattr("steel_engine.compile._postgres_checkpointer", lambda pg_url=None: None)
 
 
 @pytest.fixture
 def postgres_url() -> str:
-    url = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+    url = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
     try:
         psycopg.connect(url, connect_timeout=2).close()
     except Exception:

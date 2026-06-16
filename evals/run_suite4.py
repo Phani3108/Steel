@@ -8,10 +8,10 @@ import json
 import sys
 from pathlib import Path
 
-from jai_api.fleet import build_fleet, run_negotiation
-from jai_dyno.harness import run_suite
-from jai_dyno.suite import Case, load_suite
-from jai_manifest import Actor, RunContext
+from steel_api.fleet import build_fleet, run_negotiation
+from steel_dyno.harness import run_suite
+from steel_dyno.suite import Case, load_suite
+from steel_manifest import Actor, RunContext
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "evals" / "suite4_negotiation" / "scenarios.yaml"

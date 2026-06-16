@@ -12,18 +12,18 @@ jobs:
       postgres:
         image: pgvector/pgvector:pg16
         env:
-          POSTGRES_USER: jai
-          POSTGRES_PASSWORD: jai
-          POSTGRES_DB: jai
+          POSTGRES_USER: steel
+          POSTGRES_PASSWORD: steel
+          POSTGRES_DB: steel
         ports: ["5433:5432"]
         options: >-
-          --health-cmd "pg_isready -U jai -d jai"
+          --health-cmd "pg_isready -U steel -d steel"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
     env:
-      POSTGRES_URL: postgresql://jai:jai@localhost:5433/jai
-      JAI_MOCK: "1"
+      POSTGRES_URL: postgresql://steel:steel@localhost:5433/steel
+      STEEL_MOCK: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5

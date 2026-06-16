@@ -1,10 +1,10 @@
-"""jai-cortex standalone demo: the same questions, four personas, four outcomes."""
+"""steel-cortex standalone demo: the same questions, four personas, four outcomes."""
 
 import json
 from pathlib import Path
 
-from jai_cortex import Cortex
-from jai_manifest import Actor, RunContext
+from steel_cortex import Cortex
+from steel_manifest import Actor, RunContext
 
 SEED = Path(__file__).resolve().parents[3] / "data" / "seed"
 

@@ -8,16 +8,16 @@ from typing import Any
 import psycopg
 import pytest
 from fastapi.testclient import TestClient
-from jai_api.main import create_app
-from jai_manifest import Actor, AuditEvent, RunContext, canonical_json, sha256_hex
+from steel_api.main import create_app
+from steel_manifest import Actor, AuditEvent, RunContext, canonical_json, sha256_hex
 from psycopg.types.json import Jsonb
 
-POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://jai:jai@localhost:5433/jai")
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "postgresql://steel:steel@localhost:5433/steel")
 
 GENESIS_HASH = "0" * 64
 
-# Minimal mirrors of the published table contracts owned by jai-blackbox and
-# jai-meter — created here only so the suite is self-sufficient on a fresh
+# Minimal mirrors of the published table contracts owned by steel-blackbox and
+# steel-meter — created here only so the suite is self-sufficient on a fresh
 # database. IF NOT EXISTS makes this a no-op when the owning parts already ran.
 _CONTRACT_DDL = """
 CREATE SCHEMA IF NOT EXISTS blackbox;

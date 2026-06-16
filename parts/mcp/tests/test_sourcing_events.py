@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pytest
-from jai_mcp import sourcing_events as se
+from steel_mcp import sourcing_events as se
 
 TENANT = "TEN-TEST"
 CM = "category_manager"

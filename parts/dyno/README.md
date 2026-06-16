@@ -1,4 +1,4 @@
-# jai-dyno — the test bench
+# steel-dyno — the test bench
 
 **SYSTEM: SAFETY** · eval harness + scorecards + autonomy promotion gates.
 An agent ships only with a passing scorecard.
@@ -20,14 +20,14 @@ An agent ships only with a passing scorecard.
 
 ## Standalone use case
 
-You don't need JAI to use the bench. Any team with a chatbot, an RAG pipeline, or a
+You don't need STEEL to use the bench. Any team with a chatbot, an RAG pipeline, or a
 classifier behind a `str -> str` callable can write a YAML suite, run it in CI, and gate
 deploys on the scorecard's `pass_rate` — no manifests, no gateway, no database. The
 gateway is only needed if you want LLM-judged rubric cases; the promotion gate is only
-needed if you adopt `jai_manifest` autonomy levels.
+needed if you adopt `steel_manifest` autonomy levels.
 
 ```python
-from jai_dyno import load_suite, run_suite
+from steel_dyno import load_suite, run_suite
 
 suite = load_suite("evals/suite0_smoke/smoke.yaml")
 scorecard = run_suite(suite, my_bot.answer, agent_name="my-bot")
@@ -53,8 +53,8 @@ cases:
 ## Promotion gate
 
 ```python
-from jai_manifest import load_manifest
-from jai_dyno import promotion_gate
+from steel_manifest import load_manifest
+from steel_dyno import promotion_gate
 
 decision = promotion_gate(load_manifest("agents/scout.yaml"), scorecard)
 if decision.promote:
@@ -64,7 +64,7 @@ if decision.promote:
 ## CLI
 
 ```bash
-jai-dyno run evals/suite0_smoke/smoke.yaml --target echo
+steel-dyno run evals/suite0_smoke/smoke.yaml --target echo
 # prints the scorecard as JSON; exit 1 only if pass_rate < 0.5 (smoke threshold)
 ```
 

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from jai_dyno.scorecard import Scorecard, promotion_gate
-from jai_manifest import AgentManifest, AutonomyLevel, MetricTargets, PromptRef
+from steel_dyno.scorecard import Scorecard, promotion_gate
+from steel_manifest import AgentManifest, AutonomyLevel, MetricTargets, PromptRef
 
 
 def make_manifest(

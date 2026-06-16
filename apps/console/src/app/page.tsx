@@ -117,7 +117,7 @@ export default function HomePage() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-wrap items-center gap-3"
         >
-          <span className="label-cap text-accent">jai · cockpit</span>
+          <span className="label-cap text-accent">steel · cockpit</span>
           {controlPlaneOffline ? (
             <ReferenceBadge mode="reference" />
           ) : (

@@ -1,4 +1,4 @@
-"""Standalone jai-brakes demo: an agent hits a HITL gate on a $12,400 PO (a requester
+"""Standalone steel-brakes demo: an agent hits a HITL gate on a $12,400 PO (a requester
 may only self-approve up to $5,000), a category manager decides, the run resumes by
 reading the decision — then the kill switch stops the agent cold.
 
@@ -12,8 +12,8 @@ from __future__ import annotations
 
 import sys
 
-from jai_brakes import Brakes
-from jai_manifest import Actor, RunContext
+from steel_brakes import Brakes
+from steel_manifest import Actor, RunContext
 
 
 def show(label: str, row: dict | None) -> None:

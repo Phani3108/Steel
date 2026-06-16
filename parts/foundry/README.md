@@ -1,4 +1,4 @@
-# jai-foundry — the parts foundry
+# steel-foundry — the parts foundry
 
 **System:** CHASSIS · **Standalone use case:** a deterministic synthetic-procurement-data
 factory — drop it into any procurement, ERP, or agent-eval project that needs a realistic,
@@ -6,7 +6,7 @@ byte-reproducible dataset (suppliers, contracts, POs, invoices, RFx, policies, n
 labeled anomalies. No LLM, no network, no license-encumbered data.
 
 The foundry forges **Borealis Manufacturing**, a fictional $800M industrial manufacturer
-operating as three tenants (North America / Europe / APAC). Every JAI demo and eval is
+operating as three tenants (North America / Europe / APAC). Every STEEL demo and eval is
 grounded in this dataset, so results are comparable run-to-run.
 
 ## What it forges (seed `31082` by default)
@@ -32,14 +32,14 @@ sequential (`SUP-0001`), dates derive from base date 2026-01-01, never `uuid4` o
 
 ```sh
 # Generate to JSONL (one file per entity + manifest.json with counts and sha256s)
-jai-foundry generate --out data/seed --seed 31082
+steel-foundry generate --out data/seed --seed 31082
 
 # Load into Postgres — owns exactly the `foundry.*` schema, TRUNCATE-then-insert (idempotent)
-jai-foundry load --from data/seed --pg-url postgresql://jai:jai@localhost:5433/jai
+steel-foundry load --from data/seed --pg-url postgresql://steel:steel@localhost:5433/steel
 ```
 
 ```python
-from jai_foundry import generate, load, ensure_schema
+from steel_foundry import generate, load, ensure_schema
 
 manifest = generate(seed=31082, out="data/seed")   # returns {seed, counts, sha256}
 ensure_schema()                                     # idempotent CREATE SCHEMA/TABLEs

@@ -11,7 +11,7 @@ const POLL_MS = 60_000;
 const REFERENCE_TRANSPARENCY: Transparency = {
   ai_system: true,
   notice:
-    "You are interacting with an AI system. JAI agents draft, analyze, and act on procurement tasks; their actions are logged and bounded by policy.",
+    "You are interacting with an AI system. STEEL agents draft, analyze, and act on procurement tasks; their actions are logged and bounded by policy.",
   regulation: "EU AI Act, Article 50 — transparency obligations",
   data:
     "Operates over your tenant's procurement records — suppliers, contracts, spend, and sourcing events — never shared across tenants.",

@@ -1,12 +1,12 @@
-"""jai-gateway standalone demo — a model call through the LiteLLM proxy with NO provider
+"""steel-gateway standalone demo — a model call through the LiteLLM proxy with NO provider
 keys: routing by group, metering tags, cost extraction, and the pre-dispatch budget gate.
 
 Requires the platform proxy:   docker compose up -d --wait   (LiteLLM on :4000)
 Run:                           python parts/gateway/demo/demo.py
 """
 
-from jai_gateway import BudgetExceededError, GatewayClient
-from jai_manifest import RunContext
+from steel_gateway import BudgetExceededError, GatewayClient
+from steel_manifest import RunContext
 
 
 def main() -> None:
@@ -16,7 +16,7 @@ def main() -> None:
         budget_usd_remaining=0.50,
     ).child(agent="agent-demo")
 
-    client = GatewayClient()  # LITELLM_BASE_URL / LITELLM_MASTER_KEY / JAI_MOCK from env
+    client = GatewayClient()  # LITELLM_BASE_URL / LITELLM_MASTER_KEY / STEEL_MOCK from env
 
     print("── metering tags sent with every call ──")
     for key, value in ctx.metadata_tags().items():
@@ -26,8 +26,8 @@ def main() -> None:
     response = client.complete(
         ctx,
         group="fast",
-        messages=[{"role": "user", "content": "Say hello to the JAI demo."}],
-        mock_response="Hello from jai-gateway — routed, tagged, metered, zero keys used.",
+        messages=[{"role": "user", "content": "Say hello to the STEEL demo."}],
+        mock_response="Hello from steel-gateway — routed, tagged, metered, zero keys used.",
     )
     print(response.model_dump_json(indent=2))
 

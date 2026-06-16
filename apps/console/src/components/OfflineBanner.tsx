@@ -11,7 +11,7 @@ export function OfflineBanner({ show }: { show: boolean }) {
       <span className="font-semibold">control plane offline</span>
       <span className="text-amber-400/80">
         {" "}
-        — cannot reach the JAI API at {API_BASE}; showing last known state.
+        — cannot reach the STEEL API at {API_BASE}; showing last known state.
       </span>
     </div>
   );

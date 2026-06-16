@@ -1,7 +1,7 @@
 # agent-supplier-intel — the first knowledge agent in the catalog.
 # Answers supplier/contract/policy/news questions from the cortex semantic layer,
 # with citations, inside the asking human's permissions.
-api_version: jai/v1
+api_version: steel/v1
 name: agent-supplier-intel
 description: >
   Supplier intelligence analyst: answers questions about suppliers, items, contracts,

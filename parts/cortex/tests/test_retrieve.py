@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from jai_manifest import Actor, RunContext
+from steel_manifest import Actor, RunContext
 
 SEED_DIR = Path(__file__).resolve().parents[3] / "data" / "seed"
 

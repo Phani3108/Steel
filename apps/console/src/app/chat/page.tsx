@@ -96,7 +96,7 @@ export default function ChatPage() {
         ...t,
         {
           who: "agent",
-          text: "Control plane unreachable — is the JAI API running on :8400?",
+          text: "Control plane unreachable — is the STEEL API running on :8400?",
           transportError: true,
         },
       ]);

@@ -1,12 +1,12 @@
-"""Tests for jai_governor — every rule branch, no database needed."""
+"""Tests for steel_governor — every rule branch, no database needed."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
-from jai_governor import AWARD_GATE, INTAKE_GATE, Decision, Governor, load_policy
-from jai_manifest import Actor, RunContext
+from steel_governor import AWARD_GATE, INTAKE_GATE, Decision, Governor, load_policy
+from steel_manifest import Actor, RunContext
 from pydantic import ValidationError
 
 POLICY_VERSION = "2026.06-1"

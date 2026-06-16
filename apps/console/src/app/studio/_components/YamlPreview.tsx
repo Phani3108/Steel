@@ -72,7 +72,7 @@ function Scalar({ text }: { text: string }) {
   if (/^-?\d+(\.\d+)?$/.test(text)) {
     return <span style={{ color: COLORS.warn }}>{text}</span>;
   }
-  if (text === "jai/v1") {
+  if (text === "steel/v1") {
     return <span style={{ color: COLORS.autonomy }}>{text}</span>;
   }
   if (text === "[]") {

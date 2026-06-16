@@ -1,4 +1,4 @@
-# JAI — A Modular Agentic Platform for Procurement
+# STEEL — A Modular Agentic Platform for Procurement
 
 > Built like a car: every part has its own name, a standalone use case, and a complete
 > structure of its own — and each can be ripped out and plugged into another system over
@@ -11,38 +11,38 @@ all domain models are generic.
 ## The Parts Catalog
 
 ```
-JAI — the vehicle
+STEEL — the vehicle
 │
 ├── 1. POWERTRAIN — intelligence supply
-│   ├── jai-gateway      · multi-model LLM router: model groups, fallbacks, per-(tenant, agent)
+│   ├── steel-gateway      · multi-model LLM router: model groups, fallbacks, per-(tenant, agent)
 │   │                      virtual keys & budgets                       parts/gateway
-│   ├── jai-manifest     · declarative agent spec + validator — the "part drawing" every
+│   ├── steel-manifest     · declarative agent spec + validator — the "part drawing" every
 │   │                      agent follows (autonomy L1–L5, tools, HITL gates)  parts/manifest
-│   └── jai-engine       · manifest→runtime compiler (LangGraph today, swappable tomorrow —
+│   └── steel-engine       · manifest→runtime compiler (LangGraph today, swappable tomorrow —
 │                          proven by a second runtime)                  parts/engine
 │
 ├── 2. CHASSIS — knowledge
-│   ├── jai-cortex       · permission-aware procurement semantic layer + hybrid retrieval
-│   └── jai-foundry      · deterministic synthetic-data factory          parts/foundry
+│   ├── steel-cortex       · permission-aware procurement semantic layer + hybrid retrieval
+│   └── steel-foundry      · deterministic synthetic-data factory          parts/foundry
 │
 ├── 3. DRIVETRAIN — domain capability (the plug-and-play layer)
 │   └── 5 MCP servers: supplier-master · sourcing-events · contracts · spend-analytics · intake
 │       (mock-backed now; hexagonal adapters swap to any real S2P system's REST APIs)
 │
 ├── 4. SAFETY — trust (the moat-grade system)
-│   ├── jai-blackbox     · hash-chained tamper-evident audit chain       parts/blackbox
-│   ├── jai-governor     · policy engine: permission inheritance, spend mandates
-│   ├── jai-dyno         · eval harness, scorecards, autonomy promotion gates  parts/dyno
-│   ├── jai-brakes       · HITL approval gates + kill switches
-│   └── jai-meter        · per-action cost ledger                        parts/meter
+│   ├── steel-blackbox     · hash-chained tamper-evident audit chain       parts/blackbox
+│   ├── steel-governor     · policy engine: permission inheritance, spend mandates
+│   ├── steel-dyno         · eval harness, scorecards, autonomy promotion gates  parts/dyno
+│   ├── steel-brakes       · HITL approval gates + kill switches
+│   └── steel-meter        · per-action cost ledger                        parts/meter
 │
 ├── 5. NETWORK — the fleet
-│   ├── jai-registry     · agent cards, status, autonomy levels, scorecards
-│   ├── jai-mesh         · A2A interop + context propagation
+│   ├── steel-registry     · agent cards, status, autonomy levels, scorecards
+│   ├── steel-mesh         · A2A interop + context propagation
 │   └── agents/          · supplier-intel · sourcing · risk-sentinel · spend-analyst · negotiator
 │
 └── 6. COCKPIT — human interface
-    └── jai-console      · chat, run timeline, approvals inbox, cost dashboard, registry
+    └── steel-console      · chat, run timeline, approvals inbox, cost dashboard, registry
 ```
 
 Every part ships with its own README, standalone demo, version, and tests. Parts
@@ -63,7 +63,7 @@ Five agents, each defined by a framework-free manifest and compiled to a runtime
 ## Quickstart
 
 ```sh
-cp .env.example .env        # leave JAI_MOCK=1 for fully keyless mode (no API spend)
+cp .env.example .env        # leave STEEL_MOCK=1 for fully keyless mode (no API spend)
 make up                     # postgres + pgvector + LiteLLM gateway (docker compose)
 make seed                   # generate + load the Borealis Manufacturing dataset
 
@@ -79,7 +79,7 @@ make maturity               # the eval-gated autonomy promotion ladder
 make api & make console     # the control plane (:8400) + the cockpit console (:3000)
 ```
 
-Runs fully keyless: with `JAI_MOCK=1` every model call is served by the gateway's mock
+Runs fully keyless: with `STEEL_MOCK=1` every model call is served by the gateway's mock
 path, so the whole platform — audit chain, ledger, manifests, evals, the connected
 console — is testable with zero API spend.
 
@@ -117,7 +117,7 @@ audit trail, an agent studio (form → schema-valid manifest), and a governance 
 ### Honest data, by design
 
 Everything the console shows is real or transparently modeled — nothing fake reads as
-live. With `JAI_MOCK=1` (the keyless default) no provider is billed, so **cost is *modeled***
+live. With `STEEL_MOCK=1` (the keyless default) no provider is billed, so **cost is *modeled***
 — real per-model token rates applied to the real token counts every call meters — and
 labelled "modeled cost · no API spend". Offline/fallback data is badged "reference". The
 fleet graph reflects the **live** mesh and real hop activity, not a static blueprint.
@@ -131,7 +131,7 @@ reasoning (by design — they run keyless).
 Procurement is drowning in agent demos and starving for **governed autonomy**. The scarce
 assets are measurable outcomes per agent and trust infrastructure — permission inheritance,
 tamper-evident audit, eval-gated autonomy promotion, bounded mandates, cost-per-task
-accounting. JAI builds those as first-class parts, then assembles agents on top of them.
+accounting. STEEL builds those as first-class parts, then assembles agents on top of them.
 
 Strategy docs: [docs/strategy/](docs/strategy/) · Architecture decisions: [docs/adr/](docs/adr/)
 

@@ -1,4 +1,4 @@
-"""Standalone jai-foundry demo: forge the Borealis dataset into a temp dir and inspect it.
+"""Standalone steel-foundry demo: forge the Borealis dataset into a temp dir and inspect it.
 
 Run:  uv run python parts/foundry/demo/demo.py
 No services required — generation is pure seeded templates, no LLM, no database.
@@ -10,7 +10,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from jai_foundry.generate import generate
+from steel_foundry.generate import generate
 
 
 def main() -> None:
@@ -18,7 +18,7 @@ def main() -> None:
         out = Path(tmp) / "seed"
         manifest = generate(out=out)
 
-        print("jai-foundry — Borealis Manufacturing synthetic dataset")
+        print("steel-foundry — Borealis Manufacturing synthetic dataset")
         print(f"seed: {manifest['seed']}\n")
         print("entity counts:")
         for name, count in sorted(manifest["counts"].items()):

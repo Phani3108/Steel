@@ -1,4 +1,4 @@
-# JAI — The Vision
+# STEEL — The Vision
 
 > Founding document. Written June 2026, before the first line of code. If a design decision
 > ever conflicts with this document, the conflict must be resolved consciously — in an ADR —
@@ -6,13 +6,13 @@
 
 ## The car
 
-JAI is built the way an automotive engineer builds a car.
+STEEL is built the way an automotive engineer builds a car.
 
 Each part of a car has its own function. It can be used in other vehicles. It can be pulled
 out and connected to other types. Yet assembled together, the parts form a car that runs
 super efficiently — like a well-oiled machine.
 
-JAI is something super big. But **every feature must have:**
+STEEL is something super big. But **every feature must have:**
 
 1. **Its own name** — distinct nomenclature per part.
 2. **A standalone use case** — each part is useful on its own, outside the assembled whole.
@@ -28,9 +28,9 @@ Build only after critical scrutiny — solid, useful, highly appreciated. Never 
 ## The engineering refinement
 
 What makes a car part swappable is not the part — it is the **standardized interface**:
-the bolt pattern, the CAN bus, the OBD port. JAI's standardized interfaces are:
+the bolt pattern, the CAN bus, the OBD port. STEEL's standardized interfaces are:
 
-| Car | JAI |
+| Car | STEEL |
 |---|---|
 | Bolt patterns / connectors | **MCP** — every domain capability is an MCP server |
 | CAN bus | **A2A** — agents talk over the open agent-to-agent protocol |
@@ -44,13 +44,13 @@ imports another part's internals — enforced in CI, not by convention. Extracti
 ## The systems
 
 ```
-JAI — the vehicle
-├── POWERTRAIN  — intelligence supply   (jai-gateway · jai-manifest · jai-engine)
-├── CHASSIS     — knowledge             (jai-cortex · jai-foundry)
+STEEL — the vehicle
+├── POWERTRAIN  — intelligence supply   (steel-gateway · steel-manifest · steel-engine)
+├── CHASSIS     — knowledge             (steel-cortex · steel-foundry)
 ├── DRIVETRAIN  — domain capability     (5 procurement MCP servers)
-├── SAFETY      — trust                 (jai-blackbox · jai-governor · jai-dyno · jai-brakes · jai-meter)
-├── NETWORK     — the fleet             (jai-registry · jai-mesh · the agents)
-└── COCKPIT     — human interface       (jai-console)
+├── SAFETY      — trust                 (steel-blackbox · steel-governor · steel-dyno · steel-brakes · steel-meter)
+├── NETWORK     — the fleet             (steel-registry · steel-mesh · the agents)
+└── COCKPIT     — human interface       (steel-console)
 ```
 
 ## The standard every part must meet
@@ -66,6 +66,6 @@ A part ships when — and only when — it has:
 
 ## Non-affiliation
 
-JAI is a personal research platform. It is not affiliated with, endorsed by, or derived
-from Jaggaer, Inc. or its JAI product. All data in this repository is synthetic; all domain
+STEEL is a personal research platform. It is not affiliated with, endorsed by, or derived
+from Jaggaer, Inc. or its STEEL product. All data in this repository is synthetic; all domain
 models are generic procurement concepts.

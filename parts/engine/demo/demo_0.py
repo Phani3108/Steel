@@ -12,11 +12,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from jai_blackbox import BlackBox
-from jai_engine import compile_manifest
-from jai_gateway import GatewayClient
-from jai_manifest import Actor, RunContext, load_manifest
-from jai_meter import Meter
+from steel_blackbox import BlackBox
+from steel_engine import compile_manifest
+from steel_gateway import GatewayClient
+from steel_manifest import Actor, RunContext, load_manifest
+from steel_meter import Meter
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ECHO_DIR = REPO_ROOT / "parts" / "agents" / "echo"
@@ -34,7 +34,7 @@ def main() -> None:
     blackbox.ensure_schema()
     meter.ensure_schema()
 
-    # JAI_MOCK=1 (the default) -> the proxy answers keyless via mock_response.
+    # STEEL_MOCK=1 (the default) -> the proxy answers keyless via mock_response.
     gateway = GatewayClient()
     agent = compile_manifest(
         manifest, gateway=gateway, blackbox=blackbox, meter=meter, prompt_base=ECHO_DIR
@@ -44,7 +44,7 @@ def main() -> None:
     print(f"mock mode  : {gateway.mock}")
     print(f"checkpoint : {'postgres' if agent.checkpointer else 'none'}")
 
-    result = agent.run(ctx, "Hello, JAI.")
+    result = agent.run(ctx, "Hello, STEEL.")
     print(f"\noutput     : {result.text}")
     print(f"run id     : {result.run_id}")
     print(f"run cost   : ${meter.run_total(result.run_id)} (ledger)")

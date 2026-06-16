@@ -1,4 +1,4 @@
-"""Standalone jai-registry demo: build the real fleet roster, then pause and revive.
+"""Standalone steel-registry demo: build the real fleet roster, then pause and revive.
 
 Syncs every agent under parts/agents/ and every scorecard under evals/results/ into
 the registry, prints the roster, pauses agent-sourcing (showing the status flip and the
@@ -16,8 +16,8 @@ import sys
 from pathlib import Path
 
 import psycopg
-from jai_registry import Registry
-from jai_registry.cli import SYSTEMS
+from steel_registry import Registry
+from steel_registry.cli import SYSTEMS
 from psycopg.rows import dict_row
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]

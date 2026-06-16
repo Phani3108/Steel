@@ -1,4 +1,4 @@
-# Procurement policy — the versioned artifact jai-governor evaluates.
+# Procurement policy — the versioned artifact steel-governor evaluates.
 # Changing a rule means changing this file and bumping `version`; every Decision
 # carries the version it was evaluated under, so audits can replay history.
 version: "2026.06-1"

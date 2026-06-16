@@ -46,7 +46,7 @@ export function CatalogView() {
       <SectionHeader
         kicker="parts catalog"
         title="The vehicle"
-        subtitle="JAI is built like a car: six systems, every part named, standalone, and rippable as an MCP plug-and-play module. This is the cockpit's exploded view — hover a part to trace it, click to open its dossier."
+        subtitle="STEEL is built like a car: six systems, every part named, standalone, and rippable as an MCP plug-and-play module. This is the cockpit's exploded view — hover a part to trace it, click to open its dossier."
         action={
           <div className="flex items-center gap-2.5">
             {isLive ? (

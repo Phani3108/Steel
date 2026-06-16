@@ -6,9 +6,9 @@ from types import SimpleNamespace
 
 import pytest
 from engine_fakes import FakeBlackBox, FakeGateway, FakeMeter
-from jai_engine.compile import GuardrailViolation, compile_manifest
-from jai_engine.miniloop import compile_miniloop
-from jai_manifest import Actor, RunContext, load_manifest
+from steel_engine.compile import GuardrailViolation, compile_manifest
+from steel_engine.miniloop import compile_miniloop
+from steel_manifest import Actor, RunContext, load_manifest
 
 AGENTS = Path(__file__).resolve().parents[2] / "agents"
 SUPPLIER_INTEL = AGENTS / "supplier_intel"
@@ -32,7 +32,7 @@ def _retrieval():
 
 @pytest.fixture(autouse=True)
 def _mock_env(monkeypatch):
-    monkeypatch.setenv("JAI_MOCK", "1")
+    monkeypatch.setenv("STEEL_MOCK", "1")
     # Point the langgraph runtime's checkpointer at a dead host so it compiles without one.
     monkeypatch.setenv("POSTGRES_URL", "postgresql://nobody:n@127.0.0.1:1/none")
 

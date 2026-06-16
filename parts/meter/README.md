@@ -1,9 +1,9 @@
-# jai-meter — the odometer
+# steel-meter — the odometer
 
 **System:** SAFETY · **Standalone use case:** a drop-in cost ledger for any LLM/agent stack —
 point it at a Postgres, call `record()` after every action, and you have per-tenant /
 per-agent / per-run / per-model-group cost accounting that any future pricing model
-(chargeback, subscription tiers, per-task billing) can be built on. No JAI required:
+(chargeback, subscription tiers, per-task billing) can be built on. No STEEL required:
 the only inputs are a `RunContext`-shaped identity envelope and token/cost numbers.
 
 One ledger table, owned schema namespace `meter` (ADR-003), no other part's schema touched.
@@ -19,10 +19,10 @@ One ledger table, owned schema namespace `meter` (ADR-003), no other part's sche
 ## Usage
 
 ```python
-from jai_manifest import Actor, RunContext
-from jai_meter import Meter
+from steel_manifest import Actor, RunContext
+from steel_meter import Meter
 
-meter = Meter()                      # uses POSTGRES_URL (default postgresql://jai:jai@localhost:5433/jai)
+meter = Meter()                      # uses POSTGRES_URL (default postgresql://steel:steel@localhost:5433/steel)
 meter.ensure_schema()
 
 ctx = RunContext(

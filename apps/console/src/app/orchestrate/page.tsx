@@ -27,7 +27,7 @@ export default function OrchestratePage() {
       <SectionHeader
         kicker="cockpit · mission control"
         title="Mission"
-        subtitle="Launch a procurement intake and watch the JAI-Orchestrator route it across the fleet — every specialist, every hop, one shared trace, in real time."
+        subtitle="Launch a procurement intake and watch the STEEL-Orchestrator route it across the fleet — every specialist, every hop, one shared trace, in real time."
         action={
           referenceMode ? (
             <span

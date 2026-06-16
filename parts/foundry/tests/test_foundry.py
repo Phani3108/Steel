@@ -1,4 +1,4 @@
-"""jai-foundry tests: determinism, volumes, anomaly rates, RFx winners, Postgres round-trip."""
+"""steel-foundry tests: determinism, volumes, anomaly rates, RFx winners, Postgres round-trip."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 
 import psycopg
 import pytest
-from jai_foundry.generate import DEFAULT_SEED, generate
-from jai_foundry.load import TABLE_SPECS, load
+from steel_foundry.generate import DEFAULT_SEED, generate
+from steel_foundry.load import TABLE_SPECS, load
 
 EXPECTED_COUNTS = {
     "tenants": 3,
